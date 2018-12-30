@@ -10,7 +10,7 @@
 namespace TSK\SSO\Auth;
 
 use TSK\SSO\AppUser\AppUser;
-use TSK\SSO\Auth\Exception\AuthenticationFailedException;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\Storage\ThirdPartyStorageRepository;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
@@ -60,6 +60,7 @@ class AppUserAwarePersistingAuthenticator implements Authenticator
     }
 
     /**
+     * @throws DataCannotBeStoredException
      * @throws NoThirdPartyEmailFoundException
      * @throws ThirdPartyConnectionFailedException
      * @return AppUser

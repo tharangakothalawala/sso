@@ -7,6 +7,7 @@
 namespace TSK\SSO\Storage;
 
 use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 
@@ -33,7 +34,7 @@ interface ThirdPartyStorageRepository
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
-     * @return bool
+     * @throws DataCannotBeStoredException
      */
     public function save(
         AppUser $appUser,

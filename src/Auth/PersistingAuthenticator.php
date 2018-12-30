@@ -12,6 +12,7 @@ namespace TSK\SSO\Auth;
 use TSK\SSO\AppUser\AppUser;
 use TSK\SSO\AppUser\AppUserRepository;
 use TSK\SSO\Auth\Exception\AuthenticationFailedException;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\Storage\ThirdPartyStorageRepository;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
@@ -59,6 +60,7 @@ class PersistingAuthenticator implements Authenticator
 
     /**
      * @throws AuthenticationFailedException
+     * @throws DataCannotBeStoredException
      * @throws NoThirdPartyEmailFoundException
      * @throws ThirdPartyConnectionFailedException
      * @return AppUser

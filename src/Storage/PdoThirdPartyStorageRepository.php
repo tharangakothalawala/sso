@@ -7,6 +7,7 @@
 namespace TSK\SSO\Storage;
 
 use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 use PDOException;
@@ -78,7 +79,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
-     * @return bool
+     * @throws DataCannotBeStoredException
      */
     public function save(
         AppUser $appUser,
@@ -113,7 +114,7 @@ SQL;
             $vendorData = json_encode($thirdPartyUser->toArray());
             $appUserId = $appUser->id();
             $vendorName = $accessToken->vendor();
-            $vendorEmail = $accessToken->email();
+            $vendorEmail = $thirdPartyUser->email();
             $vendorToken = $accessToken->token();
 
             $stmt = $this->dbConnection->prepare($sql);
@@ -123,11 +124,13 @@ SQL;
             $stmt->bindParam(':vendorToken', $vendorToken, PDO::PARAM_STR);
             $stmt->bindParam(':vendorData', $vendorData, PDO::PARAM_STR);
             $stmt->execute();
-        } catch (PDOException $ex) {
-            return false;
+        } catch(PDOException $ex) {
+            throw new DataCannotBeStoredException(
+                'Couldn\'t save the third party user data. Error : ' . $ex->getMesage(),
+                $ex->getCode(),
+                $ex
+            );
         }
-
-        return true;
     }
 
     /**

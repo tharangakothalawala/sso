@@ -7,6 +7,7 @@
 namespace TSK\SSO\Storage;
 
 use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 use mysqli;
@@ -86,7 +87,7 @@ SQL
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
-     * @return bool
+     * @throws DataCannotBeStoredException
      */
     public function save(
         AppUser $appUser,
@@ -116,12 +117,15 @@ SQL;
         $vendorData = json_encode($thirdPartyUser->toArray());
         $appUserId = $appUser->id();
         $vendorName = $accessToken->vendor();
-        $vendorEmail = $accessToken->email();
+        $vendorEmail = $thirdPartyUser->email();
         $vendorToken = $accessToken->token();
 
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("sssss", $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData);
-        return $stmt->execute();
+        $saved = $stmt->execute();
+        if (!$saved) {
+            throw new DataCannotBeStoredException('Couldn\'t save the third party user data. Error : ' . $this->dbConnection->error);
+        }
     }
 
     /**

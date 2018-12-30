@@ -7,6 +7,7 @@
 namespace TSK\SSO\Storage;
 
 use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 
@@ -71,7 +72,7 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
-     * @return bool
+     * @throws DataCannotBeStoredException
      */
     public function save(
         AppUser $appUser,
@@ -87,13 +88,16 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
         $data[$key] = array(
             'app_user_id' => $appUser->id(),
             'vendor_name' => $accessToken->vendor(),
-            'vendor_email' => $accessToken->email(),
+            'vendor_email' => $thirdPartyUser->email(),
             'vendor_access_token' => $accessToken->token(),
             'vendor_data' => $thirdPartyUser->toArray(),
             'created_at' => date('Y-m-d H:i:00'),
         );
 
-        return file_put_contents($this->fileAbsolutePath(), json_encode($data));
+        $written = file_put_contents($this->fileAbsolutePath(), json_encode($data));
+        if (!$written) {
+            throw new DataCannotBeStoredException('Couldn\'t save the third party user data');
+        }
     }
 
     /**
