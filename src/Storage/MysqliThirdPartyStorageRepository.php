@@ -26,7 +26,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
     /**
      * @var string
      */
-    private $storeName;
+    private $tableName;
 
     /**
      * @param mysqli $dbConnection
@@ -34,7 +34,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
     public function __construct(mysqli $dbConnection, $tableName = 'thirdparty_connections')
     {
         $this->dbConnection = $dbConnection;
-        $this->storeName = $tableName;
+        $this->tableName = $tableName;
     }
 
     /**
@@ -47,29 +47,39 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
     public function getUser($emailAddress, $vendorName = null)
     {
         if (is_null($vendorName)) {
-            $sql = "SELECT * FROM `{$this->storeName}` WHERE `vendor_email` = ? LIMIT 1";
-            $stmt = $this->dbConnection->prepare($sql);
+            $stmt = $this->dbConnection->prepare(<<<SQL
+                SELECT
+                    `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
+                FROM `{$this->tableName}`
+                WHERE
+                    `vendor_email` = ?
+                LIMIT 1
+SQL
+            );
             $stmt->bind_param("s", $emailAddress);
-            $stmt->execute();
         } else {
-            $sql = "SELECT * FROM `{$this->storeName}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
-            $stmt = $this->dbConnection->prepare($sql);
+            $stmt = $this->dbConnection->prepare(<<<SQL
+                SELECT
+                    `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
+                FROM `{$this->tableName}`
+                WHERE
+                    `vendor_email` = ?
+                    AND `vendor_name` = ?
+                LIMIT 1
+SQL
+            );
             $stmt->bind_param("ss", $emailAddress, $vendorName);
-            $stmt->execute();
         }
 
-        $userMap = $stmt->fetch_assoc();
-        if (empty($userMap)) {
+        $stmt->execute();
+        $stmt->bind_result($appUserId, $vendor, $vendorEmail, $vendorToken, $vendorData);
+        $stmt->fetch();
+        $stmt->close();
+        if (empty($appUserId)) {
             return null;
         }
 
-        return new MappedUser(
-            $userMap['app_user_id'],
-            $userMap['vendor_name'],
-            $userMap['vendor_email'],
-            $userMap['vendor_access_token'],
-            $userMap['vendor_data']
-        );
+        return new MappedUser($appUserId, $vendor, $vendorEmail, $vendorToken, $vendorData);
     }
 
     /**
@@ -83,7 +93,6 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
         ThirdPartyUser $thirdPartyUser,
         CommonAccessToken $accessToken
     ) {
-        $tokenData = json_encode($accessToken->data());
         $sql = <<<SQL
 INSERT INTO `{$this->tableName}`
 (
@@ -96,7 +105,7 @@ INSERT INTO `{$this->tableName}`
 )
 VALUES
 (
-    ?, ?, ?, ?, ?, ?, NOW()
+    ?, ?, ?, ?, ?, NOW()
 )
 ON DUPLICATE KEY UPDATE
     `vendor_access_token` = VALUES(`vendor_access_token`),
@@ -104,21 +113,15 @@ ON DUPLICATE KEY UPDATE
     `updated_at` = NOW()
 SQL;
 
-        $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param(
-            "ssssss",
-            $appUser->id(),
-            $accessToken->vendor(),
-            $accessToken->email(),
-            $accessToken->token(),
-            $tokenData
-        );
-        $created = $stmt->execute();
-        if (!$created) {
-            return false;
-        }
+        $vendorData = json_encode($thirdPartyUser->toArray());
+        $appUserId = $appUser->id();
+        $vendorName = $accessToken->vendor();
+        $vendorEmail = $accessToken->email();
+        $vendorToken = $accessToken->token();
 
-        return true;
+        $stmt = $this->dbConnection->prepare($sql);
+        $stmt->bind_param("sssss", $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData);
+        return $stmt->execute();
     }
 
     /**
@@ -130,7 +133,7 @@ SQL;
      */
     public function remove($emailAddress, $vendorName)
     {
-        $sql = "DELETE FROM `{$this->storeName}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
+        $sql = "DELETE FROM `{$this->tableName}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("ss", $emailAddress, $vendorName);
         $stmt->execute();
