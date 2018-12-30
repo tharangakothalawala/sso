@@ -1,12 +1,13 @@
 <?php
 /**
- * @author : Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
- * @date   : 30-12-2018
+ * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
+ * @date 30-12-2018
  */
 
 namespace TSK\SSO\ThirdParty;
 
 /**
+ * @internal
  * @package TSK\SSO\ThirdParty
  *
  * This value object represents a third party user with their basic user data.

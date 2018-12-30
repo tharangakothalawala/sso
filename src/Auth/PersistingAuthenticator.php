@@ -1,7 +1,7 @@
 <?php
 /**
- * @author : Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
- * @date   : 30-12-2018
+ * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
+ * @date 30-12-2018
  *
  * This is similar to the Default version. But this also stores the vendor token user details in a given storage by mapping the client application user record.
  * use this if you want to connect & use multiple vendor login such as Facebook and/or Google.
@@ -20,6 +20,7 @@ use TSK\SSO\ThirdParty\VendorConnection;
 
 /**
  * @package TSK\SSO\Auth
+ * @see AppUserAwarePersistingAuthenticator
  *
  * Use this to do a signup/signin via a third party vendor connection by persisting vendor data.
  * It is recomended to use this if you are planning to have more than one sso integration.

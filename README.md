@@ -1,4 +1,4 @@
-# TSK SSO Library
+# TSK Single Sign On
 This is a library which can provision new accounts and to authenticate users utilizing third party vendor connections.
 
 [![Build Status](https://travis-ci.org/tharangakothalawala/sso.svg?branch=master)](https://travis-ci.org/tharangakothalawala/sso)
@@ -11,7 +11,7 @@ This is a library which can provision new accounts and to authenticate users uti
 There are three(3) main functionalities.
 
  * Third Party Login action
- * Authentication / Authorization checks
+ * Authentication / Authorization process
  * Revoking access to your client application
 
 ## Third Party Login action
@@ -31,15 +31,19 @@ $googleConnection = $googleConnectionFactory->get(
 header("Location: $googleConnection->getGrantUrl()");
 ```
 
-## Authentication / Authorization checks
+## Authentication / Authorization process
 
-Use the following code to do a signup/signin attempt. The following uses Google as an example.
+Use the following code to do a signup/signin attempt. The following uses Google as an example. Please note that you will have to implement the `TSK\SSO\AppUser\AppUserRepository` to provision and validate users according to your application logic.
 
 #### DefaultAuthenticator Usage
 
 ```php
-use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 use TSK\SSO\Auth\DefaultAuthenticator;
+use TSK\SSO\Auth\Exception\AuthenticationFailedException;
+use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
+use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
+use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
+use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 
 $googleConnectionFactory = new GoogleConnectionFactory();
 $googleConnection = $googleConnectionFactory->get(
@@ -50,7 +54,7 @@ $googleConnection = $googleConnectionFactory->get(
 
 $authenticator = new DefaultAuthenticator(
     $googleConnection,
-    new YourImplementationOfTheAppUserRepository() // you will have to implement this interface : TSK\SSO\AppUser\AppUserRepository according to your application logic to provision and check users.
+    new YourImplementationOfTheAppUserRepository()
 );
 
 try {
@@ -61,7 +65,7 @@ try {
 } catch (\Exception $ex) {
 }
 
-// log the detected application's user
+// log the detected application's user in
 $_SESSION['userid'] = $appUser->id();
 ```
 
@@ -118,6 +122,7 @@ Of course you can also use your own storage by just implementing this interface 
 In order to revoke your app from the vendor, you must have an active access token.
 
 ```php
+use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 
 $googleConnectionFactory = new GoogleConnectionFactory();
@@ -127,5 +132,41 @@ $googleConnection = $googleConnectionFactory->get(
     'http://www.your-amazing-app.com/sso/google/grant'
 );
 
-$googleConnection->revokeAccess($googleConnection->grantNewAccessToken());
+$googleConnection->revokeAccess(
+    new CommonAccessToken('token_that_you_want_revoke', 'google', 'vendor_email')
+);
 ```
+
+## Connecting multiple accounts while logged in.
+
+ * A user may have multiple accounts on one(1) vendor.
+ex: Multiple Facebook/Google accounts with different email addresses.
+
+ * Or a user can have accounts on other vendors such as Facebook and Google at the same time. You may want to let them connect other accounts to make it easier for them to authenticate/access using multiple vendors.
+
+You can use the `TSK\SSO\Auth\AppUserAwarePersistingAuthenticator` to validate the account that they selecting.
+
+```php
+use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\Auth\AppUserAwarePersistingAuthenticator;
+use TSK\SSO\Auth\PersistingAuthenticator;
+use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
+
+$userId = $_SESSION['userid'];
+if (!is_null($userId)) {
+    $authenticator = new AppUserAwarePersistingAuthenticator(
+        $googleConnection,
+        new AppUser($userId, 'current-loggedin-user-email@tsk.com')
+    );
+} else {
+    $authenticator = new PersistingAuthenticator(
+        $googleConnection,
+        new YourImplementationOfTheAppUserRepository()
+    );
+}
+```
+
+
+# What Next?
+
+To add any missing vendor support and any other storage systems.
