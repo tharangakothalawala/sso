@@ -9,7 +9,7 @@ namespace TSK\SSO\ThirdParty;
 /**
  * @package TSK\SSO\ThirdParty
  *
- * This value object can be used to represent any access token data from any vendor.
+ * This value object can be used to represent an access token by any third party vendor.
  */
 class CommonAccessToken
 {
@@ -26,24 +26,17 @@ class CommonAccessToken
     /**
      * @var string
      */
-    private $expireAt;
-
-    /**
-     * @var string
-     */
     private $email;
 
     /**
      * @param string $token
      * @param string $vendor
-     * @param string $expireAt
-     * @param string|null $email [optional]
+     * @param string|null $email [optional] associated email address to this token
      */
-    public function __construct($token, $vendor, $expireAt, $email = null)
+    public function __construct($token, $vendor, $email = null)
     {
         $this->token = $token;
         $this->vendor = $vendor;
-        $this->expireAt = $expireAt;
         $this->email = $email;
     }
 
@@ -61,14 +54,6 @@ class CommonAccessToken
     public function vendor()
     {
         return $this->vendor;
-    }
-
-    /**
-     * @return string
-     */
-    public function expireAt()
-    {
-        return $this->expireAt;
     }
 
     /**

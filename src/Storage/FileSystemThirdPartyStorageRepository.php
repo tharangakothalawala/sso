@@ -62,8 +62,7 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
                 $mappedUser['vendor_name'],
                 $mappedUser['vendor_email'],
                 $mappedUser['vendor_access_token'],
-                $mappedUser['vendor_data'],
-                $mappedUser['vendor_expire_at']
+                $mappedUser['vendor_data']
             );
         }
     }
@@ -91,7 +90,6 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
             'vendor_email' => $accessToken->email(),
             'vendor_access_token' => $accessToken->token(),
             'vendor_data' => $thirdPartyUser->toArray(),
-            'vendor_expire_at' => $accessToken->expireAt(),
             'created_at' => date('Y-m-d H:i:00'),
         );
 

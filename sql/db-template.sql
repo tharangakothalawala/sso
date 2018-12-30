@@ -8,7 +8,6 @@ CREATE TABLE `thirdparty_connections` (
     `vendor_email` VARCHAR(255) NOT NULL COMMENT 'email address associated with the third party account',
     `vendor_access_token` TEXT,
     `vendor_data` TEXT COMMENT 'any other data related to the vendor user in JSON format',
-    `vendor_expire_at` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
     `created_at` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00',
     `updated_at` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),

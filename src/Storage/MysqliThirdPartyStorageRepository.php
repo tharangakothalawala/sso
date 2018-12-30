@@ -68,8 +68,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
             $userMap['vendor_name'],
             $userMap['vendor_email'],
             $userMap['vendor_access_token'],
-            $userMap['vendor_data'],
-            $userMap['vendor_expire_at']
+            $userMap['vendor_data']
         );
     }
 
@@ -93,7 +92,6 @@ INSERT INTO `{$this->tableName}`
     `vendor_email`,
     `vendor_access_token`,
     `vendor_data`,
-    `vendor_expire_at`,
     `created_at`
 )
 VALUES
@@ -103,7 +101,6 @@ VALUES
 ON DUPLICATE KEY UPDATE
     `vendor_access_token` = VALUES(`vendor_access_token`),
     `vendor_data` = VALUES(`vendor_data`),
-    `vendor_expire_at` = VALUES(`vendor_expire_at`),
     `updated_at` = NOW()
 SQL;
 
@@ -114,8 +111,7 @@ SQL;
             $accessToken->vendor(),
             $accessToken->email(),
             $accessToken->token(),
-            $tokenData,
-            $accessToken->expireAt()
+            $tokenData
         );
         $created = $stmt->execute();
         if (!$created) {

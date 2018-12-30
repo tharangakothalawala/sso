@@ -7,17 +7,34 @@
 namespace TSK\SSO\ThirdParty\Facebook;
 
 use TSK\SSO\ThirdParty\VendorConnectionFactory;
+use TSK\SSO\Storage\ThirdPartyStorageRepository;
 
 /**
  * @package TSK\SSO\ThirdParty\Facebook
  */
 class FacebookConnectionFactory implements VendorConnectionFactory
 {
+    /**
+     * @var ThirdPartyStorageRepository
+     */
+    private $storageRepository;
+
+    /**
+     * @var string
+     */
     private $defaultGraphVersion;
+
+    /**
+     * @var string
+     */
     private $permissions;
 
-    public function __construct($defaultGraphVersion = 'v2.12', $permissions = 'public_profile,email')
-    {
+    public function __construct(
+        ThirdPartyStorageRepository $storageRepository,
+        $defaultGraphVersion = 'v2.12',
+        $permissions = 'public_profile,email'
+    ) {
+        $this->storageRepository = $storageRepository;
         $this->defaultGraphVersion = $defaultGraphVersion;
         $this->permissions = $permissions;
     }
@@ -38,7 +55,7 @@ class FacebookConnectionFactory implements VendorConnectionFactory
                 $this->permissions,
                 $callbackUrl
             ),
-            new ThirdPartyConnectionRepository()
+            $this->storageRepository
         );
     }
 }

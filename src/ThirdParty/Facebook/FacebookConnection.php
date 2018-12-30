@@ -88,11 +88,7 @@ class FacebookConnection implements VendorConnection
             $oAuth2Client = $this->facebook->getOAuth2Client();
             $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
 
-            return new CommonAccessToken(
-                $accessToken->getValue(),
-                ThirdParty::FACEBOOK,
-                $accessToken->getExpiresAt()->format('Y-m-d H:i:s')
-            );
+            return new CommonAccessToken($accessToken->getValue(), ThirdParty::FACEBOOK);
         } catch(FacebookResponseException $ex) {
             throw new ThirdPartyConnectionFailedException('Graph returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
         } catch(FacebookSDKException $ex) {

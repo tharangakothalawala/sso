@@ -12,7 +12,7 @@ namespace TSK\SSO\Storage;
  * @see TSK\SSO\AppUser\AppUser
  * @see TSK\SSO\ThirdParty\ThirdPartyUser
  *
- * This represent a mapping between the third party user with the client application user.
+ * This represent a mapping between the third party user(ThirdPartyUser) with the client application user(AppUser).
  */
 class MappedUser
 {
@@ -42,26 +42,19 @@ class MappedUser
     private $vendorData;
 
     /**
-     * @var string
-     */
-    private $vendorTokenExpireDate;
-
-    /**
      * @param string $appUserId application's use id. ex: can be a UUID or an integer
      * @param string $vendorName name of the vendor. ex: Google, Facebook, LinkedIn
      * @param string $vendorEmail user's email address at third party vendor's end
      * @param string $vendorToken
      * @param string $vendorData JSON encoded vendor user extra data.
-     * @param string $vendorTokenExpireDate
      */
-    public function __construct($appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData, $vendorTokenExpireDate)
+    public function __construct($appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData)
     {
         $this->appUserId = $appUserId;
         $this->vendorName = $vendorName;
         $this->vendorEmail = $vendorEmail;
         $this->vendorToken = $vendorToken;
         $this->vendorData = $vendorData;
-        $this->vendorTokenExpireDate = $vendorTokenExpireDate;
     }
 
     /**
@@ -115,13 +108,5 @@ class MappedUser
         }
 
         return $decoded;
-    }
-
-    /**
-     * @return string
-     */
-    public function vendorTokenExpireDate()
-    {
-        return $this->vendorTokenExpireDate;
     }
 }

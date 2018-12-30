@@ -70,8 +70,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
             $userMap['vendor_name'],
             $userMap['vendor_email'],
             $userMap['vendor_access_token'],
-            $userMap['vendor_data'],
-            $userMap['vendor_expire_at']
+            $userMap['vendor_data']
         );
     }
 
@@ -94,7 +93,6 @@ INSERT INTO `{$this->tableName}`
     `vendor_email`,
     `vendor_access_token`,
     `vendor_data`,
-    `vendor_expire_at`,
     `created_at`
 )
 VALUES
@@ -104,13 +102,11 @@ VALUES
     :vendorEmail,
     :vendorToken,
     :vendorData,
-    :expireAt,
     NOW()
 )
 ON DUPLICATE KEY UPDATE
     `vendor_access_token` = VALUES(`vendor_access_token`),
     `vendor_data` = VALUES(`vendor_data`),
-    `vendor_expire_at` = VALUES(`vendor_expire_at`),
     `updated_at` = NOW()
 SQL;
         try {
@@ -119,7 +115,6 @@ SQL;
             $vendorName = $accessToken->vendor();
             $vendorEmail = $accessToken->email();
             $vendorToken = $accessToken->token();
-            $expireAt = $accessToken->expireAt();
 
             $stmt = $this->dbConnection->prepare($sql);
             $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_STR);
@@ -127,7 +122,6 @@ SQL;
             $stmt->bindParam(':vendorEmail', $vendorEmail, PDO::PARAM_STR);
             $stmt->bindParam(':vendorToken', $vendorToken, PDO::PARAM_STR);
             $stmt->bindParam(':vendorData', $vendorData, PDO::PARAM_STR);
-            $stmt->bindParam(':expireAt', $expireAt, PDO::PARAM_STR);
             $stmt->execute();
         } catch(PDOException $ex) {
             return false;
@@ -149,6 +143,6 @@ SQL;
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bindParam(':email', $emailAddress, PDO::PARAM_STR);
         $stmt->bindParam(':vendor', $vendorName, PDO::PARAM_STR);
-        $stmt->execute();
+        return $stmt->execute();
     }
 }

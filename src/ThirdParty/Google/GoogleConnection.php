@@ -99,7 +99,6 @@ class GoogleConnection implements VendorConnection
         return new CommonAccessToken(
             $authResponse['access_token'],
             ThirdParty::GOOGLE,
-            date('Y-m-d H:i:s', time() + $authResponse['expires_in']),
             $userInfo['email']
         );
     }
