@@ -16,10 +16,10 @@ class CurlRequest
     public function __construct()
     {
         $this->curl = curl_init();
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, FALSE);
-        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 120);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 120);
     }

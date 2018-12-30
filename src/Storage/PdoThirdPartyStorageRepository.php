@@ -123,7 +123,7 @@ SQL;
             $stmt->bindParam(':vendorToken', $vendorToken, PDO::PARAM_STR);
             $stmt->bindParam(':vendorData', $vendorData, PDO::PARAM_STR);
             $stmt->execute();
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             return false;
         }
 

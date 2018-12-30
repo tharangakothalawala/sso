@@ -89,9 +89,9 @@ class FacebookConnection implements VendorConnection
             $accessToken = $oAuth2Client->getLongLivedAccessToken($accessToken);
 
             return new CommonAccessToken($accessToken->getValue(), ThirdParty::FACEBOOK);
-        } catch(FacebookResponseException $ex) {
+        } catch (FacebookResponseException $ex) {
             throw new ThirdPartyConnectionFailedException('Graph returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
-        } catch(FacebookSDKException $ex) {
+        } catch (FacebookSDKException $ex) {
             throw new ThirdPartyConnectionFailedException('Facebook SDK returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
         }
     }
@@ -122,9 +122,9 @@ class FacebookConnection implements VendorConnection
                 "http://graph.facebook.com/{$graphUser->getId()}/picture",
                 $graphUser->getGender()
             );
-        } catch(FacebookResponseException $ex) {
+        } catch (FacebookResponseException $ex) {
             throw new ThirdPartyConnectionFailedException('Graph returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
-        } catch(FacebookSDKException $ex) {
+        } catch (FacebookSDKException $ex) {
             throw new ThirdPartyConnectionFailedException('Facebook SDK returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
         }
     }

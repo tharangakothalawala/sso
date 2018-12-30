@@ -73,7 +73,7 @@ class PersistingAuthenticator implements Authenticator
         // check if this is a signin attempt with an existing user account
         $existingAppUser = $this->appUserRepository->getUser($thirdPartyUser->email());
 
-        // if no user account found with the same vendor email as the app email, do a mapping lookup in the storage across all vendors 
+        // if no user account found with the same vendor email as the app email, do a mapping lookup in the storage across all vendors
         if (is_null($existingAppUser)) {
             $mappedUser = $this->storageRepository->getUser($thirdPartyUser->email());
             if (!is_null($mappedUser)) {

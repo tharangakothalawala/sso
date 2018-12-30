@@ -8,30 +8,30 @@ namespace TSK\SSO\ThirdParty;
 
 /**
  * @package TSK\SSO\ThirdParty
- *
- * This value object can be used to represent an access token by any third party vendor.
  */
 class CommonAccessToken
 {
     /**
-     * @var string
+     * @var string the access token string
      */
     private $token;
 
     /**
-     * @var string
+     * @var string name of the vendor. ex: Google
      */
     private $vendor;
 
     /**
-     * @var string
+     * @var string email used within the vendor platform
      */
     private $email;
 
     /**
-     * @param string $token
-     * @param string $vendor
-     * @param string|null $email [optional] associated email address to this token
+     * This value object can be used to represent an access token by any third party vendor.
+     *
+     * @param string $token the access token string
+     * @param string $vendor name of the vendor. ex: Google
+     * @param string|null $email [optional] associated email address to this token used within the vendor platform
      */
     public function __construct($token, $vendor, $email = null)
     {
@@ -41,6 +41,8 @@ class CommonAccessToken
     }
 
     /**
+     * returns the access token string
+     *
      * @return string
      */
     public function token()
@@ -49,6 +51,8 @@ class CommonAccessToken
     }
 
     /**
+     * returns name of the vendor. ex: Google
+     *
      * @return string
      */
     public function vendor()
@@ -57,6 +61,8 @@ class CommonAccessToken
     }
 
     /**
+     * returns the associated email address to this token used within the vendor platform if any
+     *
      * @return string
      */
     public function email()
