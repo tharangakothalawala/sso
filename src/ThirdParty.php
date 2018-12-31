@@ -8,9 +8,12 @@ namespace TSK\SSO;
 
 /**
  * @package TSK\SSO
+ *
+ * List of supported third party vendors
  */
 class ThirdParty
 {
     const GOOGLE = 'google';
     const FACEBOOK = 'facebook';
+    const LINKEDIN = 'linkedin';
 }

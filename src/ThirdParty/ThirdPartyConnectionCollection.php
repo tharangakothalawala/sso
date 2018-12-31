@@ -6,6 +6,8 @@
 
 namespace TSK\SSO\ThirdParty;
 
+use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
+
 /**
  * @package TSK\SSO\ThirdParty
  *
@@ -14,11 +16,13 @@ namespace TSK\SSO\ThirdParty;
 class ThirdPartyConnectionCollection
 {
     /**
-     * VendorConnection[]
+     * VendorConnection[] list of configured vendor connections
      */
     private $vendorConnections;
 
     /**
+     * Adds a configured vendor connection into the known list of connections.
+     *
      * @param string $vendorName the third party vendor name. ex: google, facebook, linkedin etc
      * @param VendorConnection $vendorConnection
      */
@@ -28,13 +32,16 @@ class ThirdPartyConnectionCollection
     }
 
     /**
+     * Returns a requested vendor connection if available or throws an exception.
+     *
      * @param string $vendorName the third party vendor name. ex: google, facebook, linkedin etc
-     * @return VendorConnection|null
+     * @return VendorConnection
+     * @throws UnknownVendorRequestException
      */
     public function getByVendor($vendorName)
     {
         if (!isset($this->vendorConnections[$vendorName])) {
-            return null;
+            throw new UnknownVendorRequestException(sprintf('Given vendor \'%s\' is not yet configured', $vendorName));
         }
 
         return $this->vendorConnections[$vendorName];
