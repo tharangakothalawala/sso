@@ -16,4 +16,5 @@ class ThirdParty
     const GOOGLE = 'google';
     const FACEBOOK = 'facebook';
     const LINKEDIN = 'linkedin';
+    const SLACK = 'slack';
 }
