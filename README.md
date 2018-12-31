@@ -1,10 +1,11 @@
 # TSK Single Sign On
 This is a library which can provision new accounts and to authenticate users utilizing third party vendor connections.
 
-[![Build Status](https://travis-ci.org/tharangakothalawala/sso.svg?branch=master)](https://travis-ci.org/tharangakothalawala/sso)
-[![Total Downloads](https://poser.pugx.org/tharangakothalawala/sso/d/total.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 [![Latest Stable Version](https://poser.pugx.org/tharangakothalawala/sso/v/stable.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 [![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/tharangakothalawala/sso)
+[![Build Status](https://travis-ci.org/tharangakothalawala/sso.svg?branch=master)](https://travis-ci.org/tharangakothalawala/sso)
+[![Quality Score](https://img.shields.io/scrutinizer/g/tharangakothalawala/sso.svg?style=flat-square)](https://scrutinizer-ci.com/g/tharangakothalawala/sso)
+[![Total Downloads](https://poser.pugx.org/tharangakothalawala/sso/d/total.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 
 # Structure
 
