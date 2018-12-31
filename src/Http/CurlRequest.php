@@ -47,11 +47,11 @@ class CurlRequest
      * makes POST request to a given endpoint
      *
      * @param string $url external url
-     * @param array $data data to post
-     * @param array $headers http headers if any [optional]
+     * @param array $data [optional] data to post
+     * @param array $headers [optional] http headers if any
      * @return string
      */
-    public function post($url, array $data, array $headers = array())
+    public function post($url, array $data = array(), array $headers = array())
     {
         if (!empty($postData)) {
             curl_setopt($this->curl, CURLOPT_POST, count($postData));

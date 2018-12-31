@@ -6,7 +6,7 @@
 
 namespace TSK\SSO\ThirdParty\LinkedIn;
 
-use Happyr\LinkedIn\Exception\LinkedInException;
+use TSK\SSO\Http\CurlRequest;
 use TSK\SSO\ThirdParty;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
@@ -16,13 +16,22 @@ use TSK\SSO\ThirdParty\VendorConnection;
 
 /**
  * @package TSK\SSO\ThirdParty\LinkedIn
+ * @see https://developer.linkedin.com/docs/oauth2
  */
 class LinkedInConnection implements VendorConnection
 {
+    const AUTH_API_BASE = 'https://www.linkedin.com/oauth/v2';
+    const API_BASE = 'https://api.linkedin.com/v1';
+
     /**
      * @var LinkedInApiConfiguration
      */
     private $linkedInApiConfiguration;
+
+    /**
+     * @var CurlRequest
+     */
+    private $curlClient;
 
     /**
      * @var LinkedIn
@@ -31,14 +40,14 @@ class LinkedInConnection implements VendorConnection
 
     /**
      * @param LinkedInApiConfiguration $linkedinApiConfiguration
+     * @param CurlRequest $curlClient
      */
-    public function __construct(LinkedInApiConfiguration $linkedinApiConfiguration)
-    {
+    public function __construct(
+        LinkedInApiConfiguration $linkedinApiConfiguration,
+        CurlRequest $curlClient
+    ) {
         $this->linkedinApiConfiguration = $linkedinApiConfiguration;
-        $this->linkedin = new LinkedIn(
-            $this->linkedinApiConfiguration->appId(),
-            $this->linkedinApiConfiguration->appSecret()
-        );
+        $this->curlClient = $curlClient;
     }
 
     /**
@@ -48,8 +57,13 @@ class LinkedInConnection implements VendorConnection
      */
     public function getGrantUrl()
     {
-        return $this->linkedin->getLoginUrl(
-            array('redirect_uri' => $this->linkedinApiConfiguration->redirectUrl())
+        return sprintf(
+            '%s/authorization?response_type=code&client_id=%s&redirect_uri=%s&state=%s&scope=%s',
+            self::AUTH_API_BASE,
+            $this->linkedinApiConfiguration->appId(),
+            $this->linkedinApiConfiguration->redirectUrl(),
+            $this->linkedinApiConfiguration->ourSecretState(),
+            $this->linkedinApiConfiguration->permissions()
         );
     }
 
@@ -61,18 +75,31 @@ class LinkedInConnection implements VendorConnection
      */
     public function grantNewAccessToken()
     {
-        try {
-            return new CommonAccessToken(
-                $this->linkedin->accessToken()->getToken(),
-                ThirdParty::LINKEDIN
-            );
-        } catch(LinkedInException $ex) {
-            throw new ThirdPartyConnectionFailedException(
-                sprintf('Failed to establish a new third party vendor connection. Error : %s', $ex->getMessage()),
-                $ex->getCode(),
-                $ex
-            );
+        // state and code validation
+        if (empty($_GET['code'])
+            || empty($_GET['state'])
+            || $_GET['state'] !== $this->linkedinApiConfiguration->ourSecretState()
+        ) {
+            throw new ThirdPartyConnectionFailedException('Invalid request!');
         }
+
+        $accessTokenJsonInfo = $this->curlClient->post(
+            sprintf(
+                "%s/accessToken?grant_type=authorization_code&code=%s&redirect_uri=%s&client_id=%s&client_secret=%s",
+                self::AUTH_API_BASE,
+                $_GET['code'],
+                $this->linkedinApiConfiguration->redirectUrl(),
+                $this->linkedinApiConfiguration->appId(),
+                $this->linkedinApiConfiguration->appSecret()
+            )
+        );
+
+        $accessTokenInfo = json_decode($accessTokenJsonInfo, true);
+        if (!empty($accessTokenInfo['error'])) {
+            throw new ThirdPartyConnectionFailedException('Failed to establish a new third party vendor connection. Details : ' . $accessTokenInfo['error_description']);
+        }
+
+        return new CommonAccessToken($accessTokenInfo['access_token'], ThirdParty::LINKEDIN);
     }
 
     /**
@@ -86,7 +113,13 @@ class LinkedInConnection implements VendorConnection
     public function getSelf(CommonAccessToken $accessToken)
     {
         try {
-            $user = $this->linkedin->get('v1/people/~:(firstName,lastName,email-address,id)');
+            $userJson = $this->curlClient->get(sprintf(
+                '%s/people/~:(id,firstName,lastName,emailAddress)?format=json&oauth2_access_token=%s',
+                self::API_BASE,
+                $accessToken->token()
+            ));
+
+            $user = json_decode($userJson, true);
             if (empty($user['emailAddress'])) {
                 throw new NoThirdPartyEmailFoundException('An email address cannot be found from vendor');
             }
@@ -113,7 +146,11 @@ class LinkedInConnection implements VendorConnection
      */
     public function revokeAccess(CommonAccessToken $accessToken)
     {
-        $this->linkedin->clearStorage();
+        $this->curlClient->get(sprintf(
+            'https://api.linkedin.com/uas/oauth/invalidateToken?oauth2_access_token=%s',
+            $accessToken->token()
+        ));
+
         return true;
     }
 }
