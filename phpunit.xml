@@ -2,9 +2,23 @@
 <phpunit bootstrap="vendor/autoload.php"
          colors="true"
 >
+
     <testsuites>
-        <testsuite name="Test Suite">
+        <testsuite name="TSK Single Sign On Test Suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">src</directory>
+            <exclude>
+                <directory>vendor</directory>
+                <directory>tests</directory>
+                <directory>sql</directory>
+                <directory>examples</directory>
+            </exclude>
+        </whitelist>
+    </filter>
+
 </phpunit>

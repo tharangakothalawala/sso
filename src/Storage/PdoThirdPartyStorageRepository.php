@@ -29,16 +29,16 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
     /**
      * @var string
      */
-    private $tableName;
+    private $table;
 
     /**
      * @param PDO $dbConnection
-     * @param string $tableName name of the table in the MySQL database
+     * @param string $table name of the table in the MySQL database
      */
-    public function __construct(PDO $dbConnection, $tableName = 'thirdparty_connections')
+    public function __construct(PDO $dbConnection, $table = 'thirdparty_connections')
     {
         $this->dbConnection = $dbConnection;
-        $this->tableName = $tableName;
+        $this->table = $table;
     }
 
     /**
@@ -51,10 +51,10 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
     public function getUser($emailAddress, $vendorName = null)
     {
         if (is_null($vendorName)) {
-            $sql = "SELECT * FROM `{$this->tableName}` WHERE `vendor_email` = :email LIMIT 1";
+            $sql = "SELECT * FROM `{$this->table}` WHERE `vendor_email` = :email LIMIT 1";
             $stmt = $this->dbConnection->prepare($sql);
         } else {
-            $sql = "SELECT * FROM `{$this->tableName}` WHERE `vendor_email` = :email AND `vendor_name` = :vendor LIMIT 1";
+            $sql = "SELECT * FROM `{$this->table}` WHERE `vendor_email` = :email AND `vendor_name` = :vendor LIMIT 1";
             $stmt = $this->dbConnection->prepare($sql);
             $stmt->bindParam(':vendor', $vendorName, PDO::PARAM_STR);
         }
@@ -88,7 +88,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
         CommonAccessToken $accessToken
     ) {
         $sql = <<<SQL
-INSERT INTO `{$this->tableName}`
+INSERT INTO `{$this->table}`
 (
     `app_user_id`,
     `vendor_name`,
@@ -143,7 +143,7 @@ SQL;
      */
     public function remove($emailAddress, $vendorName)
     {
-        $sql = "DELETE FROM `{$this->tableName}` WHERE `vendor_email` = :email AND `vendor_name` = :vendor LIMIT 1";
+        $sql = "DELETE FROM `{$this->table}` WHERE `vendor_email` = :email AND `vendor_name` = :vendor LIMIT 1";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bindParam(':email', $emailAddress, PDO::PARAM_STR);
         $stmt->bindParam(':vendor', $vendorName, PDO::PARAM_STR);

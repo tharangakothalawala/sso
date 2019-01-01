@@ -3,7 +3,8 @@
  * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
  * @date 30-12-2018
  *
- * This is similar to the Default version. But this also stores the vendor token user details in a given storage by mapping the client application user record.
+ * This is similar to the Default version.
+ * But this also stores the vendor token user details in a given storage by mapping the client application user record.
  * use this if you want to connect & use multiple vendor login such as Facebook and/or Google.
  */
 

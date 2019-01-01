@@ -28,16 +28,16 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
     /**
      * @var string
      */
-    private $tableName;
+    private $table;
 
     /**
      * @param mysqli $dbConnection
-     * @param string $tableName name of the table in the MySQL database
+     * @param string $table name of the table in the MySQL database
      */
-    public function __construct(mysqli $dbConnection, $tableName = 'thirdparty_connections')
+    public function __construct(mysqli $dbConnection, $table = 'thirdparty_connections')
     {
         $this->dbConnection = $dbConnection;
-        $this->tableName = $tableName;
+        $this->table = $table;
     }
 
     /**
@@ -53,7 +53,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
             $stmt = $this->dbConnection->prepare(<<<SQL
                 SELECT
                     `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
-                FROM `{$this->tableName}`
+                FROM `{$this->table}`
                 WHERE
                     `vendor_email` = ?
                 LIMIT 1
@@ -64,7 +64,7 @@ SQL
             $stmt = $this->dbConnection->prepare(<<<SQL
                 SELECT
                     `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
-                FROM `{$this->tableName}`
+                FROM `{$this->table}`
                 WHERE
                     `vendor_email` = ?
                     AND `vendor_name` = ?
@@ -97,7 +97,7 @@ SQL
         CommonAccessToken $accessToken
     ) {
         $sql = <<<SQL
-INSERT INTO `{$this->tableName}`
+INSERT INTO `{$this->table}`
 (
     `app_user_id`,
     `vendor_name`,
@@ -141,7 +141,7 @@ SQL;
      */
     public function remove($emailAddress, $vendorName)
     {
-        $sql = "DELETE FROM `{$this->tableName}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
+        $sql = "DELETE FROM `{$this->table}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("ss", $emailAddress, $vendorName);
         $stmt->execute();

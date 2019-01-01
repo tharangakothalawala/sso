@@ -6,6 +6,13 @@
 
 namespace TSK\SSO\Http;
 
+/**
+ * @codeCoverageIgnore
+ * @internal
+ * @package TSK\SSO\Storage
+ *
+ * This can send GET & POST requests. @todo: Add Guzzle
+ */
 class CurlRequest
 {
     /**

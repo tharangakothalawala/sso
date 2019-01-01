@@ -9,7 +9,8 @@ namespace TSK\SSO\ThirdParty;
 /**
  * @package TSK\SSO\ThirdParty
  *
- * Client ID, Client Secret & Callback URL are the mainly used common parameters which are required in an oauth framework.
+ * Client ID, Client Secret & Callback URL are the mainly used common parameters
+ * which are required in an oauth framework.
  * In order to create a new third party vendor connection, you must implement this interface.
  */
 interface VendorConnectionFactory
