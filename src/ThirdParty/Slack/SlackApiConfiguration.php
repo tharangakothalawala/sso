@@ -8,6 +8,7 @@ namespace TSK\SSO\ThirdParty\Slack;
 
 /**
  * @package TSK\SSO\ThirdParty\Slack
+ * @see https://api.slack.com/apps
  */
 class SlackApiConfiguration
 {

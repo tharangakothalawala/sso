@@ -13,6 +13,7 @@ use TSK\SSO\ThirdParty\ThirdPartyUser;
 use mysqli;
 
 /**
+ * @codeCoverageIgnore
  * @package TSK\SSO\Storage
  *
  * This will connect to a MySQL database using the php-mysql driver to persist vendor data.
@@ -31,6 +32,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
 
     /**
      * @param mysqli $dbConnection
+     * @param string $tableName name of the table in the MySQL database
      */
     public function __construct(mysqli $dbConnection, $tableName = 'thirdparty_connections')
     {
@@ -57,7 +59,7 @@ class MysqliThirdPartyStorageRepository implements ThirdPartyStorageRepository
                 LIMIT 1
 SQL
             );
-            $stmt->bind_param("s", $emailAddress);
+            $stmt->bind_param('s', $emailAddress);
         } else {
             $stmt = $this->dbConnection->prepare(<<<SQL
                 SELECT
@@ -69,7 +71,7 @@ SQL
                 LIMIT 1
 SQL
             );
-            $stmt->bind_param("ss", $emailAddress, $vendorName);
+            $stmt->bind_param('ss', $emailAddress, $vendorName);
         }
 
         $stmt->execute();
@@ -121,10 +123,12 @@ SQL;
         $vendorToken = $accessToken->token();
 
         $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param("sssss", $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData);
+        $stmt->bind_param('sssss', $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData);
         $saved = $stmt->execute();
         if (!$saved) {
-            throw new DataCannotBeStoredException('Couldn\'t save the third party user data. Error : ' . $this->dbConnection->error);
+            throw new DataCannotBeStoredException(
+                sprintf("Couldn't save the third party user data. Error : %s", $this->dbConnection->error)
+            );
         }
     }
 

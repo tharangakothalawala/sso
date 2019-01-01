@@ -7,6 +7,7 @@
 namespace TSK\SSO\ThirdParty\Google;
 
 use Google_Service_Plus;
+use TSK\SSO\ThirdParty\VendorConnection;
 use TSK\SSO\ThirdParty\VendorConnectionFactory;
 use TSK\SSO\Http\CurlRequest;
 

@@ -20,55 +20,49 @@ use TSK\SSO\ThirdParty\VendorConnection;
  * @see PersistingAuthenticator
  *
  * Use this to do a signup/signin via a third party vendor connection.
- * It is recomended to use this if are planning to have only one sso integration.
+ * It is recommended to use this if are planning to have only one sso integration.
  */
 class DefaultAuthenticator implements Authenticator
 {
-    /**
-     * @var VendorConnection
-     */
-    private $thirdPartyConnection;
-
     /**
      * @var AppUserRepository
      */
     private $appUserRepository;
 
     /**
-     * @param VendorConnection $thirdPartyConnection vendor connectin to use to perform an auth.
-     * @param AppUserRepository $appUserRepository client application specific user repository implementation to use to provision or validate users.
+     * @param AppUserRepository $appUserRepository client application specific user repository implementation to use
+     *        to provision or validate users.
      */
-    public function __construct(
-        VendorConnection $vendorConnection,
-        AppUserRepository $appUserRepository
-    ) {
-        $this->vendorConnection = $vendorConnection;
+    public function __construct(AppUserRepository $appUserRepository)
+    {
         $this->appUserRepository = $appUserRepository;
     }
 
     /**
+     * This will try to authenticate a user using any given vendor connection.
+     * Upon a successful attempt, returns the authenticated user.
+     *
+     * @param VendorConnection $thirdPartyConnection vendor connection to use to perform an auth
+     * @return AppUser
+     *
      * @throws AuthenticationFailedException
      * @throws NoThirdPartyEmailFoundException
      * @throws ThirdPartyConnectionFailedException
-     * @return AppUser
      */
-    public function signIn()
+    public function authenticate(VendorConnection $thirdPartyConnection)
     {
-        $accessToken = $this->vendorConnection->grantNewAccessToken();
+        $accessToken = $thirdPartyConnection->grantNewAccessToken();
 
-        $thirdPartyUser = $this->vendorConnection->getSelf($accessToken);
+        $thirdPartyUser = $thirdPartyConnection->getSelf($accessToken);
 
-        // SIGNIN ATTEMP
+        // a SIGN-IN attempt
         // check if this is a signin attempt with an existing user account
         $existingAppUser = $this->appUserRepository->getUser($thirdPartyUser->email());
 
-        // SIGNUP ATTEMP
+        // a SIGN-UP attempt
         // if no user found previously, let's create a new user as this seems like a signup attempt
         if (is_null($existingAppUser)) {
             $existingAppUser = $this->appUserRepository->create($thirdPartyUser);
-            if (!is_null($existingAppUser)) {
-                $existingAppUser->markAsNewUser();
-            }
         }
 
         // if still the an app user cannot be resolved, throw error.

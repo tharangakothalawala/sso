@@ -6,6 +6,7 @@
 
 namespace TSK\SSO\ThirdParty\Facebook;
 
+use TSK\SSO\ThirdParty\VendorConnection;
 use TSK\SSO\ThirdParty\VendorConnectionFactory;
 use TSK\SSO\Storage\ThirdPartyStorageRepository;
 

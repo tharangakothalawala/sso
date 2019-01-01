@@ -11,7 +11,7 @@ namespace TSK\SSO\AppUser;
  *
  * This represents a user within the client application with their basic data.
  */
-class AppUser
+abstract class AppUser
 {
     /**
      * @var string
@@ -24,12 +24,7 @@ class AppUser
     private $email;
 
     /**
-     * @var bool
-     */
-    private $isExistingUser = true;
-
-    /**
-     * @param string $id the unique id of the application's user entity. ex: UUID
+     * @param string $id the unique id of the application's user entity. ex: a UUID
      * @param string $email the email address of the application's user entity
      */
     public function __construct($id, $email)
@@ -55,15 +50,9 @@ class AppUser
     }
 
     /**
+     * Returns true if this user is an existing user or newly created one.
+     *
      * @return bool
      */
-    public function isExistingUser()
-    {
-        return $this->isExistingUser;
-    }
-
-    public function markAsNewUser()
-    {
-        $this->isExistingUser = false;
-    }
+    abstract public function isExistingUser();
 }

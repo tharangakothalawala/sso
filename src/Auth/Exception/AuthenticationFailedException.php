@@ -4,7 +4,7 @@
  * @date 30-12-2018
  */
 
-namespace TSK\SSO\Exception;
+namespace TSK\SSO\Auth\Exception;
 
 use Exception;
 

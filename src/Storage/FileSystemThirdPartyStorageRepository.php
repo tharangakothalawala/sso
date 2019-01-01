@@ -53,8 +53,8 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
                 $vendorName = $mappedUser['vendor_name'];
             }
 
-            $seachKey = sprintf('%s::%s', $vendorName, $emailAddress);
-            if ($vendorAndEmail !== $seachKey) {
+            $searchKey = sprintf('%s::%s', $vendorName, $emailAddress);
+            if ($vendorAndEmail !== $searchKey) {
                 continue;
             }
 
@@ -66,6 +66,8 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
                 $mappedUser['vendor_data']
             );
         }
+
+        return null;
     }
 
     /**
@@ -81,22 +83,22 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
     ) {
         $data = $this->getDecodedData();
         if (is_null($data)) {
-            return false;
+            return;
         }
 
-        $key = sprintf('%s::%s', $accessToken->vendor(), $accessToken->email());
+        $key = sprintf('%s::%s', $accessToken->vendor(), $thirdPartyUser->email());
         $data[$key] = array(
             'app_user_id' => $appUser->id(),
             'vendor_name' => $accessToken->vendor(),
             'vendor_email' => $thirdPartyUser->email(),
             'vendor_access_token' => $accessToken->token(),
-            'vendor_data' => $thirdPartyUser->toArray(),
+            'vendor_data' => json_encode($thirdPartyUser->toArray()),
             'created_at' => date('Y-m-d H:i:00'),
         );
 
         $written = file_put_contents($this->fileAbsolutePath(), json_encode($data));
         if (!$written) {
-            throw new DataCannotBeStoredException('Couldn\'t save the third party user data');
+            throw new DataCannotBeStoredException("Couldn't save the third party user data due to a file system error");
         }
     }
 
@@ -114,7 +116,7 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
             return false;
         }
 
-        $key = sprintf('%s::%s', $accessToken->vendor(), $accessToken->email());
+        $key = sprintf('%s::%s', $vendorName, $emailAddress);
         unset($data[$key]);
         return file_put_contents($this->fileAbsolutePath(), json_encode($data));
     }
@@ -141,13 +143,19 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
         return $fileDataDecoded;
     }
 
+    /**
+     * Creates a new storage file in the file system. empty json object will be added if the file is empty.
+     */
     private function createFile()
     {
-        if (file_exists($this->fileAbsolutePath())) {
-            return;
+        if (!file_exists($this->fileAbsolutePath())) {
+            file_put_contents($this->fileAbsolutePath(), '{}');
         }
 
-        file_put_contents($this->fileAbsolutePath(), '{}');
+        $contents = file_get_contents($this->fileAbsolutePath());
+        if (empty($contents)) {
+            file_put_contents($this->fileAbsolutePath(), '{}');
+        }
     }
 
     /**

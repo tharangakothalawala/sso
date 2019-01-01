@@ -6,6 +6,7 @@
 
 namespace TSK\SSO\ThirdParty\Slack;
 
+use TSK\SSO\ThirdParty\VendorConnection;
 use TSK\SSO\ThirdParty\VendorConnectionFactory;
 use TSK\SSO\Http\CurlRequest;
 

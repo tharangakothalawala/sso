@@ -13,10 +13,12 @@ use TSK\SSO\ThirdParty\ThirdPartyUser;
 
 /**
  * @package TSK\SSO\Storage
- * @see TSK\SSO\Auth\PersistingAuthenticator
+ * @see PersistingAuthenticator
  * @see FileSystemThirdPartyStorageRepository
  *
- * This is used to persist the vendor connection data in your own storage mechanics. ex: MySQL, Mongo, Cloud or even in File System
+ * This is used to persist the vendor connection data in your own storage mechanics.
+ * ex: MySQL, Mongo, Cloud or even in File System
+ *
  * Implement this to use the PersistingAuthenticator for example.
  */
 interface ThirdPartyStorageRepository

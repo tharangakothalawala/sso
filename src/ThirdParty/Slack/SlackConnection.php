@@ -6,7 +6,6 @@
 
 namespace TSK\SSO\ThirdParty\Slack;
 
-use RuntimeException;
 use TSK\SSO\Http\CurlRequest;
 use TSK\SSO\ThirdParty;
 use TSK\SSO\ThirdParty\CommonAccessToken;
@@ -16,6 +15,7 @@ use TSK\SSO\ThirdParty\ThirdPartyUser;
 use TSK\SSO\ThirdParty\VendorConnection;
 
 /**
+ * @codeCoverageIgnore
  * @package TSK\SSO\ThirdParty\Slack
  * @see https://api.slack.com/docs/oauth#flow
  */
@@ -44,9 +44,7 @@ class SlackConnection implements VendorConnection
     }
 
     /**
-     * Use this to get a link to redirect a user to the third party login
-     *
-     * @return string
+     * Use this to redirect the user to the third party login page to grant permission to use their account.
      */
     public function getGrantUrl()
     {
@@ -85,7 +83,9 @@ class SlackConnection implements VendorConnection
 
         $accessTokenInfo = json_decode($accessTokenJsonInfo, true);
         if (!empty($accessTokenInfo['error'])) {
-            throw new ThirdPartyConnectionFailedException('An error occured while getting the access. Details : ' . $accessTokenInfo['error']);
+            throw new ThirdPartyConnectionFailedException(
+                'An error occurred while getting the access. Details : ' . $accessTokenInfo['error']
+            );
         }
 
         return new CommonAccessToken($accessTokenInfo['access_token'], ThirdParty::SLACK);
@@ -125,7 +125,8 @@ class SlackConnection implements VendorConnection
     }
 
     /**
-     * Use this to revoke the access to the third party data. this will completely remove the access from the vendor side.
+     * Use this to revoke the access to the third party data.
+     * This will completely remove the access from the vendor side.
      *
      * @param CommonAccessToken $accessToken
      * @return bool

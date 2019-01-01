@@ -10,6 +10,7 @@
 namespace TSK\SSO\Auth;
 
 use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\AppUser\ExistingAppUser;
 use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\Storage\ThirdPartyStorageRepository;
@@ -21,7 +22,8 @@ use TSK\SSO\ThirdParty\VendorConnection;
  * @package TSK\SSO\Auth
  * @see PersistingAuthenticator
  *
- * Use this to validate and connect other accounts belong to the same vendor. You need to use PersistingAuthenticator for logins.
+ * Use this to validate and connect other accounts belong to the same vendor.
+ * You need to use PersistingAuthenticator when the user is NOT logged in yet.
  *
  * ex: A user can have three(3) Google Mail accounts.
  *
@@ -29,11 +31,6 @@ use TSK\SSO\ThirdParty\VendorConnection;
  */
 class AppUserAwarePersistingAuthenticator implements Authenticator
 {
-    /**
-     * @var VendorConnection
-     */
-    private $thirdPartyConnection;
-
     /**
      * @var AppUser
      */
@@ -45,40 +42,43 @@ class AppUserAwarePersistingAuthenticator implements Authenticator
     private $storageRepository;
 
     /**
-     * @param VendorConnection $thirdPartyConnection vendor connectin to use to perform an auth.
      * @param AppUser $appUser client application user which can be used to connect multiple other vendor accounts.
-     * @param ThirdPartyStorageRepository $storageRepository a storage implementation to store the third party auth. will use file system as the default storage.
+     * @param ThirdPartyStorageRepository $storageRepository a storage implementation to store the third party auth
+     *        data. By default uses file system as the storage.
      */
-    public function __construct(
-        VendorConnection $thirdPartyConnection,
-        AppUser $appUser,
-        ThirdPartyStorageRepository $storageRepository = null
-    ) {
-        $this->thirdPartyConnection = $thirdPartyConnection;
+    public function __construct(AppUser $appUser, ThirdPartyStorageRepository $storageRepository = null)
+    {
         $this->appUser = $appUser;
-        $this->storageRepository = is_null($storageRepository) ? new FileSystemThirdPartyStorageRepository() : $storageRepository;
+        $this->storageRepository = is_null($storageRepository)
+            ? new FileSystemThirdPartyStorageRepository()
+            : $storageRepository;
     }
 
     /**
+     * This will try to authenticate a user using any given vendor connection.
+     * Upon a successful attempt, returns the authenticated user.
+     *
+     * @param VendorConnection $thirdPartyConnection vendor connection to use to perform an auth
+     * @return AppUser
+     *
      * @throws DataCannotBeStoredException
      * @throws NoThirdPartyEmailFoundException
      * @throws ThirdPartyConnectionFailedException
-     * @return AppUser
      */
-    public function signIn()
+    public function authenticate(VendorConnection $thirdPartyConnection)
     {
-        $accessToken = $this->thirdPartyConnection->grantNewAccessToken();
+        $accessToken = $thirdPartyConnection->grantNewAccessToken();
 
-        $thirdPartyUser = $this->thirdPartyConnection->getSelf($accessToken);
+        $thirdPartyUser = $thirdPartyConnection->getSelf($accessToken);
 
-        /*
-          Resolving a new app user by taking
-            - the known user's application id
-            - and the incoming new vendor account's email.
+        /**
+         * Resolving a new app user by taking
+         *  - the known user's application id
+         *  - and the incoming new vendor account's email
          */
-        $derivedAppUser = new AppUser($this->appUser->id(), $thirdPartyUser->email());
+        $derivedAppUser = new ExistingAppUser($this->appUser->id(), $thirdPartyUser->email());
 
-        // Let's add this new third party user mapping for the existing user into storage
+        // Let's store this new third party user mapping against the existing user
         $this->storageRepository->save($derivedAppUser, $thirdPartyUser, $accessToken);
 
         return $derivedAppUser;

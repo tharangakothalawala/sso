@@ -9,10 +9,11 @@ namespace TSK\SSO\Storage;
 /**
  * @internal
  * @package TSK\SSO\Storage
- * @see TSK\SSO\AppUser\AppUser
- * @see TSK\SSO\ThirdParty\ThirdPartyUser
+ * @see \TSK\SSO\AppUser\AppUser
+ * @see \TSK\SSO\ThirdParty\ThirdPartyUser
  *
  * This represent a mapping between the third party user(ThirdPartyUser) with the client application user(AppUser).
+ * This object is only created within the library and is readonly.
  */
 class MappedUser
 {

@@ -7,6 +7,7 @@
 namespace TSK\SSO\ThirdParty\LinkedIn;
 
 use TSK\SSO\Http\CurlRequest;
+use TSK\SSO\ThirdParty\VendorConnection;
 use TSK\SSO\ThirdParty\VendorConnectionFactory;
 
 /**
@@ -36,7 +37,7 @@ class LinkedInConnectionFactory implements VendorConnectionFactory
     public function get($clientId, $clientSecret, $callbackUrl)
     {
         return new LinkedInConnection(
-            new LinkedInApiConfiguration($clientId, $clientSecret, $callbackUrl, $this->permissions),
+            new LinkedInApiConfiguration($clientId, $clientSecret, $this->permissions, $callbackUrl),
             new CurlRequest()
         );
     }

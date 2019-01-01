@@ -2,12 +2,13 @@
 /**
  * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
  * @date 31-12-2018
+ *
+ * Goto https://console.developers.google.com to create a test Google App which takes just 5 minutes ;)
  */
 
 include_once __DIR__ . '/../vendor/autoload.php';
 
-use Exception;
-use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\AppUser\ExistingAppUser;
 use TSK\SSO\Auth\AppUserAwarePersistingAuthenticator;
 use TSK\SSO\Auth\Exception\AuthenticationFailedException;
 use TSK\SSO\Auth\PersistingAuthenticator;
@@ -17,8 +18,7 @@ use TSK\SSO\ThirdParty\ThirdPartyConnectionCollection;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
 use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
-use TSK\SSO\ThirdParty\Google\GoogleConnection;
-use TSK\SSO\ThirdParty\Google\GoogleConnectionF
+use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 use TSK\SSO\ThirdParty;
 
 session_start();
@@ -27,7 +27,7 @@ $userId = !empty($_SESSION['userId']) ? $_SESSION['userId'] : null;
 $vendorName = !empty($_GET['vendor']) ? $_GET['vendor'] : 'google';
 $type = !empty($_GET['type']) ? $_GET['type'] : 'signin';
 
-// you can add multiple vendor support
+// using 'ThirdPartyConnectionCollection' as a helper, you can add multiple vendors
 $connectionFactoryCollection = new ThirdPartyConnectionCollection();
 $googleConnectionFactory = new GoogleConnectionFactory();
 $connectionFactoryCollection->add(
@@ -40,7 +40,7 @@ $connectionFactoryCollection->add(
 );
 
 try {
-    $thirdPartyConnection = $connectionFactoryCollection->getByVendor($vendor);
+    $thirdPartyConnection = $connectionFactoryCollection->getByVendor($vendorName);
 } catch (UnknownVendorRequestException $ex) {
     die('The requested vendor connection is not yet available!');
 }
@@ -48,21 +48,23 @@ try {
 $exampleAppUserRepository = new ExampleAppUserRepository();
 
 switch ($type) {
-    case 'signin' :
+    case 'signin':
         header("Location : {$thirdPartyConnection->getGrantUrl()}");
         break;
 
-    case 'grant' :
-        // if we have a user id means, the user is already logged in. so we can connect/relate the incoming grant to this user.
+    case 'grant':
+        // if we have a user id, it means the user is already logged in.
+        // so we can connect/relate the incoming grant to this user.
         if (!empty($userId)) {
-            $knownUser = new AppUser($userId, 'email@not-so-important.com');
-            $authenticator = new AppUserAwarePersistingAuthenticator($thirdPartyConnection, $knownUser);
+            $authenticator = new AppUserAwarePersistingAuthenticator(
+                new ExistingAppUser($userId, 'email@not-so-important.com')
+            );
         } else {
-            $authenticator = new PersistingAuthenticator($thirdPartyConnection, $exampleAppUserRepository);
+            $authenticator = new PersistingAuthenticator($exampleAppUserRepository);
         }
 
         try {
-            $appUser = $authenticator->signin();
+            $appUser = $authenticator->authenticate($thirdPartyConnection);
         } catch (AuthenticationFailedException $ex) {
             die("Error : {$ex->getMessage()}");
         } catch (NoThirdPartyEmailFoundException $ex) {
@@ -76,24 +78,24 @@ switch ($type) {
         }
 
         if (!empty($userId)) {
-            header("Location : http://example.com/examples/home.php?status=connected");
+            header("Location : http://example.com/examples/home.php?message=new-vendor-connected");
             break;
         }
 
         // log the detected application's user in
-        $_SESSION['userid'] = $appUser->id();
+        $_SESSION['userId'] = $appUser->id();
 
         if ($appUser->isExistingUser()) {
-            header("Location : http://example.com/examples/home.php?status=welcome-back");
+            header("Location : http://example.com/examples/home.php?message=welcome-back");
         } else {
-            header("Location : http://example.com/examples/home.php?status=thanks-for-registering");
+            header("Location : http://example.com/examples/home.php?message=thanks-for-registering");
         }
         break;
 
-    case 'revoke' :
+    case 'revoke':
         $thirdPartyConnection->revokeAccess(
             new CommonAccessToken('token_that_you_want_revoke', 'google', 'vendor_email')
         );
-        header("Location : http://example.com/examples/home.php?status=disconnected");
+        header("Location : http://example.com/examples/home.php?message=vendor-disconnected");
         break;
 }

@@ -13,14 +13,12 @@ use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
 use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 use TSK\SSO\ThirdParty\VendorConnection;
-use Facebook\Exceptions\FacebookAuthenticationException;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
-use Facebook\Authentication\AccessToken;
-use Facebook\GraphNodes\GraphUser;
 
 /**
+ * @codeCoverageIgnore
  * @package TSK\SSO\ThirdParty\Facebook
  * @see https://developers.facebook.com/docs/php/api/5.0.0
  */
@@ -44,7 +42,6 @@ class FacebookConnection implements VendorConnection
     /**
      * @param FacebookApiConfiguration $facebookApiConfiguration
      * @param ThirdPartyStorageRepository $storageRepository
-     * @param int $userId
      */
     public function __construct(
         FacebookApiConfiguration $facebookApiConfiguration,
@@ -67,10 +64,10 @@ class FacebookConnection implements VendorConnection
     public function getGrantUrl()
     {
         $params = array('req_perms' => $this->facebookApiConfiguration->appPermissions());
-        $helper = $this->facebook->getRedirectLoginHelper();
-        $loginUrl = $helper->getLoginUrl($this->facebookApiConfiguration->redirectUrl(), $params);
 
-        return $loginUrl;
+        $helper = $this->facebook->getRedirectLoginHelper();
+
+        return $helper->getLoginUrl($this->facebookApiConfiguration->redirectUrl(), $params);
     }
 
     /**
@@ -90,9 +87,17 @@ class FacebookConnection implements VendorConnection
 
             return new CommonAccessToken($accessToken->getValue(), ThirdParty::FACEBOOK);
         } catch (FacebookResponseException $ex) {
-            throw new ThirdPartyConnectionFailedException('Graph returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
+            throw new ThirdPartyConnectionFailedException(
+                'Graph returned an error: ' . $ex->getMessage(),
+                $ex->getCode(),
+                $ex
+            );
         } catch (FacebookSDKException $ex) {
-            throw new ThirdPartyConnectionFailedException('Facebook SDK returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
+            throw new ThirdPartyConnectionFailedException(
+                'Facebook SDK returned an error: ' . $ex->getMessage(),
+                $ex->getCode(),
+                $ex
+            );
         }
     }
 
@@ -123,14 +128,23 @@ class FacebookConnection implements VendorConnection
                 $graphUser->getGender()
             );
         } catch (FacebookResponseException $ex) {
-            throw new ThirdPartyConnectionFailedException('Graph returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
+            throw new ThirdPartyConnectionFailedException(
+                'Graph returned an error: ' . $ex->getMessage(),
+                $ex->getCode(),
+                $ex
+            );
         } catch (FacebookSDKException $ex) {
-            throw new ThirdPartyConnectionFailedException('Facebook SDK returned an error: ' . $ex->getMessage(), $ex->getCode(), $ex);
+            throw new ThirdPartyConnectionFailedException(
+                'Facebook SDK returned an error: ' . $ex->getMessage(),
+                $ex->getCode(),
+                $ex
+            );
         }
     }
 
     /**
-     * Use this to revoke the access to the third party data. this will completely remove the access from the vendor side.
+     * Use this to revoke the access to the third party data.
+     * This will completely remove the access from the vendor side.
      *
      * @param CommonAccessToken $accessToken
      * @return bool
@@ -148,9 +162,15 @@ class FacebookConnection implements VendorConnection
         }
 
         try {
-            $this->facebook->delete(sprintf('/%s/permissions', $vendorData[ThirdPartyUser::ID]), array(), $accessToken->token());
+            $this->facebook->delete(
+                sprintf('/%s/permissions', $vendorData[ThirdPartyUser::ID]),
+                array(),
+                $accessToken->token()
+            );
         } catch (FacebookResponseException $ex) {
             return false;
         }
+
+        return true;
     }
 }

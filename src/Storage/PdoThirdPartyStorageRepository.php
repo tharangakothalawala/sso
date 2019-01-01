@@ -14,6 +14,7 @@ use PDOException;
 use PDO;
 
 /**
+ * @codeCoverageIgnore
  * @package TSK\SSO\Storage
  *
  * This will connect to a MySQL database using the php-pdo driver to persist vendor data.
@@ -32,6 +33,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
 
     /**
      * @param PDO $dbConnection
+     * @param string $tableName name of the table in the MySQL database
      */
     public function __construct(PDO $dbConnection, $tableName = 'thirdparty_connections')
     {
@@ -51,15 +53,14 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
         if (is_null($vendorName)) {
             $sql = "SELECT * FROM `{$this->tableName}` WHERE `vendor_email` = :email LIMIT 1";
             $stmt = $this->dbConnection->prepare($sql);
-            $stmt->bindParam(':email', $emailAddress, PDO::PARAM_STR);
-            $stmt->execute();
         } else {
             $sql = "SELECT * FROM `{$this->tableName}` WHERE `vendor_email` = :email AND `vendor_name` = :vendor LIMIT 1";
             $stmt = $this->dbConnection->prepare($sql);
-            $stmt->bindParam(':email', $emailAddress, PDO::PARAM_STR);
             $stmt->bindParam(':vendor', $vendorName, PDO::PARAM_STR);
-            $stmt->execute();
         }
+
+        $stmt->bindParam(':email', $emailAddress, PDO::PARAM_STR);
+        $stmt->execute();
 
         $userMap = $stmt->fetch(PDO::FETCH_ASSOC);
         if (empty($userMap)) {
@@ -124,9 +125,9 @@ SQL;
             $stmt->bindParam(':vendorToken', $vendorToken, PDO::PARAM_STR);
             $stmt->bindParam(':vendorData', $vendorData, PDO::PARAM_STR);
             $stmt->execute();
-        } catch(PDOException $ex) {
+        } catch (PDOException $ex) {
             throw new DataCannotBeStoredException(
-                'Couldn\'t save the third party user data. Error : ' . $ex->getMesage(),
+                sprintf("Couldn't save the third party user data. Error : %s", $ex->getMessage()),
                 $ex->getCode(),
                 $ex
             );

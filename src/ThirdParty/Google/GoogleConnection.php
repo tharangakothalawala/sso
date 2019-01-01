@@ -18,6 +18,7 @@ use Google_Service_Plus;
 use RuntimeException;
 
 /**
+ * @codeCoverageIgnore
  * @package TSK\SSO\ThirdParty\Google
  * @see https://console.developers.google.com
  */
@@ -89,7 +90,9 @@ class GoogleConnection implements VendorConnection
                 $userInfo = $this->googleClient->verifyIdToken();
             }
         } catch (\Exception $ex) {
-            throw new ThirdPartyConnectionFailedException(sprintf('Failed to establish a new third party vendor connection. Error : %s', $ex->getMessage()));
+            throw new ThirdPartyConnectionFailedException(
+                sprintf('Failed to establish a new third party vendor connection. Error : %s', $ex->getMessage())
+            );
         }
 
         if (empty($authResponse['access_token'])) {
@@ -116,9 +119,12 @@ class GoogleConnection implements VendorConnection
         $userJsonInfo = $this->curlClient->get(
             sprintf('%s/oauth2/v1/userinfo?access_token=%s', self::API_BASE, $accessToken->token())
         );
+
         $userInfo = json_decode($userJsonInfo, true);
         if (!empty($userInfo['error'])) {
-            throw new ThirdPartyConnectionFailedException(sprintf('Failed to retrieve third party user data. Error : %s', $userInfo['error']));
+            throw new ThirdPartyConnectionFailedException(
+                sprintf('Failed to retrieve third party user data. Error : %s', $userInfo['error'])
+            );
         }
 
         if (empty($userInfo['email'])) {
@@ -135,7 +141,8 @@ class GoogleConnection implements VendorConnection
     }
 
     /**
-     * Use this to revoke the access to the third party data. this will completely remove the access from the vendor side.
+     * Use this to revoke the access to the third party data.
+     * This will completely remove the access from the vendor side.
      *
      * @param CommonAccessToken $accessToken
      * @return bool

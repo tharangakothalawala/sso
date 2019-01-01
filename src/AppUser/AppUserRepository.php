@@ -14,16 +14,16 @@ use TSK\SSO\ThirdParty\ThirdPartyUser;
  * Use this to integrate this package with the client application context.
  * This can be used to:
  *     1. Provision new users upon a successful third party sso auth.
- *     2. Sign In incomng users into your system upon a successful third party sso auth.
+ *     2. Sign In incoming users into your system upon a successful third party sso auth.
  */
 interface AppUserRepository
 {
     /**
      * Use this to provision a new user in the client application side.
-     * Upon successfull creation, sends an instance of an AppUser
+     * Upon successful creation, sends an instance of an AppUser
      *
      * @param ThirdPartyUser $thirdPartyUser
-     * @return AppUser|null
+     * @return NewAppUser|null
      */
     public function create(ThirdPartyUser $thirdPartyUser);
 
@@ -31,7 +31,7 @@ interface AppUserRepository
      * Returns an application's user representation or null if no user if found.
      *
      * @param string $email the email address of the application's user entity
-     * @return AppUser|null
+     * @return ExistingAppUser|null
      */
     public function getUser($email);
 }

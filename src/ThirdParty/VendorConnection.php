@@ -6,13 +6,14 @@
 
 namespace TSK\SSO\ThirdParty;
 
-use TSK\SSO\Exception\NoThirdPartyEmailFoundException;
-use TSK\SSO\Exception\ThirdPartyConnectionFailedException;
+use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
+use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 
 /**
  * @package TSK\SSO\ThirdParty
  *
- * Any third party vendor connection must implement these basic functionality to smoothly integrate and operate vendor based SSO.
+ * Any third party vendor connection must implement these basic functionality to smoothly integrate
+ * and operate vendor based SSO.
  */
 interface VendorConnection
 {
@@ -42,7 +43,8 @@ interface VendorConnection
     public function getSelf(CommonAccessToken $accessToken);
 
     /**
-     * Use this to revoke the access to the third party data. this will completely remove the access from the vendor side.
+     * Use this to revoke the access to the third party data.
+     * This will completely remove the access from the vendor side.
      *
      * @param CommonAccessToken $accessToken
      * @return bool

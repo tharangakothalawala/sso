@@ -8,6 +8,7 @@ namespace TSK\SSO\ThirdParty\LinkedIn;
 
 /**
  * @package TSK\SSO\ThirdParty\LinkedIn
+ * @see https://developer.linkedin.com/docs/oauth2
  */
 class LinkedInApiConfiguration
 {
@@ -24,25 +25,25 @@ class LinkedInApiConfiguration
     /**
      * @var string
      */
-    private $redirectUrl;
+    private $appPermissions;
 
     /**
      * @var string
      */
-    private $permissions;
+    private $redirectUrl;
 
     /**
      * @param string $appId
      * @param string $appSecret
+     * @param string $appPermissions
      * @param string $redirectUrl
-     * @param string $permissions
      */
-    public function __construct($appId, $appSecret, $redirectUrl, $permissions)
+    public function __construct($appId, $appSecret, $appPermissions, $redirectUrl)
     {
         $this->appId = $appId;
         $this->appSecret = $appSecret;
+        $this->appPermissions = $appPermissions;
         $this->redirectUrl = $redirectUrl;
-        $this->permissions = $permissions;
     }
 
     /**
@@ -64,17 +65,17 @@ class LinkedInApiConfiguration
     /**
      * @return string
      */
-    public function redirectUrl()
+    public function appPermissions()
     {
-        return $this->redirectUrl;
+        return $this->appPermissions;
     }
 
     /**
      * @return string
      */
-    public function permissions()
+    public function redirectUrl()
     {
-        return $this->permissions;
+        return $this->redirectUrl;
     }
 
     /**

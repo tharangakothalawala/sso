@@ -5,14 +5,15 @@ This is a library which can provision new accounts and to authenticate users uti
 [![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 [![Build Status](https://travis-ci.org/tharangakothalawala/sso.svg?branch=master)](https://travis-ci.org/tharangakothalawala/sso)
 [![Quality Score](https://img.shields.io/scrutinizer/g/tharangakothalawala/sso.svg?style=flat-square)](https://scrutinizer-ci.com/g/tharangakothalawala/sso)
+[![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/tharangakothalawala/sso.svg?style=flat-square)](https://scrutinizer-ci.com/g/tharangakothalawala/sso)
 [![Total Downloads](https://poser.pugx.org/tharangakothalawala/sso/d/total.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 
 # Structure
 
-There are three(3) main functionalities.
+There are three(3) main functions.
 
  * Third Party Login action
- * Authentication / Authorization process
+ * Authentication process
  * Revoking access to your client application
 
 ## Third Party Login action
@@ -32,9 +33,10 @@ $googleConnection = $googleConnectionFactory->get(
 header("Location: $googleConnection->getGrantUrl()");
 ```
 
-## Authentication / Authorization process
+## Authentication process
 
-Use the following code to do a signup/signin attempt. The following uses Google as an example. Please note that you will have to implement the `TSK\SSO\AppUser\AppUserRepository` to provision and validate users according to your application logic.
+Use the following code to do a signup/signin. The following uses Google as an example. Please note that you will have to implement the `TSK\SSO\AppUser\AppUserRepository` to provision and validate users according to your application logic.
+See my example in the `examples` directory.
 
 #### DefaultAuthenticator Usage
 
@@ -54,39 +56,40 @@ $googleConnection = $googleConnectionFactory->get(
 );
 
 $authenticator = new DefaultAuthenticator(
-    $googleConnection,
     new YourImplementationOfTheAppUserRepository()
 );
 
 try {
-    $appUser = $authenticator->signin();
-} catch (ThirdPartyConnectionFailedException $ex) {
-} catch (NoThirdPartyEmailFoundException $ex) {
+    $appUser = $authenticator->authenticate($googleConnection);
 } catch (AuthenticationFailedException $ex) {
+} catch (DataCannotBeStoredException $ex) {
+} catch (NoThirdPartyEmailFoundException $ex) {
+} catch (ThirdPartyConnectionFailedException $ex) {
 } catch (\Exception $ex) {
 }
 
 // log the detected application's user in
-$_SESSION['userid'] = $appUser->id();
+$_SESSION['userId'] = $appUser->id();
 ```
 
 Please note that using the `TSK\SSO\Auth\DefaultAuthenticator` will just do a simple lookup of the user store using your logic. If you want to support multiple vendors and to avoid creating new users per each of their specific email address, you will have to use this `TSK\SSO\Auth\PersistingAuthenticator`.
 
 #### PersistingAuthenticator Usage
 
-This uses File Sytem by default as the storge for the user mappings.
+This uses File System by default as the storage for the user mappings.
 
 ```php
 use TSK\SSO\Auth\PersistingAuthenticator;
 use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 
 $authenticator = new PersistingAuthenticator(
-    $googleConnection,
     new YourImplementationOfTheAppUserRepository()
 );
 ```
 
 However there are two classes available for you to use MySQL as the storage.
+
+For MySQL, I have provided a schema file under sql folder. Please use that.
 
 * `TSK\SSO\Storage\PdoThirdPartyStorageRepository`
 
@@ -96,9 +99,12 @@ use TSK\SSO\Storage\PdoThirdPartyStorageRepository;
 use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 
 $authenticator = new PersistingAuthenticator(
-    $googleConnection,
     new YourImplementationOfTheAppUserRepository(),
-    new PdoThirdPartyStorageRepository(<An Active PDO Connection>, 'Optional Table Name (default:thirdparty_connections)'), // \DB::connection()->getPdo() In Laravel
+    new PdoThirdPartyStorageRepository(
+        // In Laravel, you can do this to get its PDO connection: \DB::connection()->getPdo();
+        new PDO('mysql:dbname=db;host=localhost', 'foo', 'bar'),
+        'Optional Table Name (default:thirdparty_connections)'
+    ),
 );
 ```
 
@@ -110,13 +116,12 @@ use TSK\SSO\Storage\PdoThirdPartyStorageRepository;
 use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 
 $authenticator = new PersistingAuthenticator(
-    $googleConnection,
     new YourImplementationOfTheAppUserRepository(),
     new MysqliThirdPartyStorageRepository(new mysqli('localhost', 'foo', 'bar', 'db')),
 );
 ```
 
-Of course you can also use your own storage by just implementing this interface : `TSK\SSO\Storage\ThirdPartyStorageRepository`.
+Of course you can use your own storage by just implementing this interface : `TSK\SSO\Storage\ThirdPartyStorageRepository`.
 
 ## Revoking access to your client application
 
@@ -148,7 +153,7 @@ ex: Multiple Facebook/Google accounts with different email addresses.
 You can use the `TSK\SSO\Auth\AppUserAwarePersistingAuthenticator` to validate the account that they selecting.
 
 ```php
-use TSK\SSO\AppUser\AppUser;
+use TSK\SSO\AppUser\ExistingAppUser;
 use TSK\SSO\Auth\AppUserAwarePersistingAuthenticator;
 use TSK\SSO\Auth\PersistingAuthenticator;
 use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
@@ -156,12 +161,10 @@ use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 $userId = $_SESSION['userid'];
 if (!is_null($userId)) {
     $authenticator = new AppUserAwarePersistingAuthenticator(
-        $googleConnection,
-        new AppUser($userId, 'current-loggedin-user-email@tsk.com')
+        new ExistingAppUser($userId, 'current-loggedin-user-email@tsk-webdevelopment.com')
     );
 } else {
     $authenticator = new PersistingAuthenticator(
-        $googleConnection,
         new YourImplementationOfTheAppUserRepository()
     );
 }

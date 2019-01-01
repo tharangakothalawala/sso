@@ -8,11 +8,13 @@ include_once __DIR__ . '/../vendor/autoload.php';
 
 use TSK\SSO\AppUser\AppUser;
 use TSK\SSO\AppUser\AppUserRepository;
+use TSK\SSO\AppUser\ExistingAppUser;
+use TSK\SSO\AppUser\NewAppUser;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
 
 class ExampleAppUserRepository implements AppUserRepository
 {
-    private $userDataBase = './tsk.sso.demo-user-store.json'
+    private $userDataBase = './tsk.sso.demo-user-store.json';
 
     public function __construct()
     {
@@ -23,7 +25,7 @@ class ExampleAppUserRepository implements AppUserRepository
 
     /**
      * Use this to provision a new user in the client application side.
-     * Upon successfull creation, sends a an instance of an AppUser
+     * Upon successful creation, sends a an instance of an AppUser
      *
      * @param ThirdPartyUser $thirdPartyUser
      * @return AppUser|null
@@ -32,16 +34,18 @@ class ExampleAppUserRepository implements AppUserRepository
     {
         $string = json_encode($thirdPartyUser->toArray());
         file_put_contents($this->userDataBase, $string);
+
+        return new NewAppUser($thirdPartyUser->id(), $thirdPartyUser->email());
     }
 
     /**
      * Returns an application's user representation or null if no user if found.
      *
      * @param string $email the email address of the application's user entity
-     * @return AppUser|null
+     * @return ExistingAppUser|null
      */
     public function getUser($email)
     {
-        return new AppUser('4ebdaa95-74b8-4eef-86b1-def7dc06aed1', $email);
+        return new ExistingAppUser('4ebdaa95-74b8-4eef-86b1-def7dc06aed1', $email);
     }
 }

@@ -11,6 +11,7 @@ namespace TSK\SSO\Auth;
 
 use TSK\SSO\AppUser\AppUser;
 use TSK\SSO\AppUser\AppUserRepository;
+use TSK\SSO\AppUser\ExistingAppUser;
 use TSK\SSO\Auth\Exception\AuthenticationFailedException;
 use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
@@ -24,15 +25,10 @@ use TSK\SSO\ThirdParty\VendorConnection;
  * @see AppUserAwarePersistingAuthenticator
  *
  * Use this to do a signup/signin via a third party vendor connection by persisting vendor data.
- * It is recomended to use this if you are planning to have more than one sso integration.
+ * It is recommended to use this if you are planning to have more than one sso integration.
  */
 class PersistingAuthenticator implements Authenticator
 {
-    /**
-     * @var VendorConnection
-     */
-    private $thirdPartyConnection;
-
     /**
      * @var AppUserRepository
      */
@@ -44,52 +40,56 @@ class PersistingAuthenticator implements Authenticator
     private $storageRepository;
 
     /**
-     * @param VendorConnection $thirdPartyConnection vendor connectin to use to perform an auth.
-     * @param AppUserRepository $appUserRepository client application specific user repository implementation to use to provision or validate users.
-     * @param ThirdPartyStorageRepository $storageRepository a storage implementation to store the third party auth. will use file system as the default storage.
+     * @param AppUserRepository $appUserRepository client application specific user repository implementation to use
+     *        to provision or validate users.
+     * @param ThirdPartyStorageRepository $storageRepository a storage implementation to store the third party auth
+     *        data. By default uses file system as the storage.
      */
     public function __construct(
-        VendorConnection $thirdPartyConnection,
         AppUserRepository $appUserRepository,
         ThirdPartyStorageRepository $storageRepository = null
     ) {
-        $this->thirdPartyConnection = $thirdPartyConnection;
         $this->appUserRepository = $appUserRepository;
-        $this->storageRepository = is_null($storageRepository) ? new FileSystemThirdPartyStorageRepository() : $storageRepository;
+        $this->storageRepository = is_null($storageRepository)
+            ? new FileSystemThirdPartyStorageRepository()
+            : $storageRepository;
     }
 
     /**
+     * This will try to authenticate a user using any given vendor connection.
+     * Upon a successful attempt, returns the authenticated user.
+     *
+     * @param VendorConnection $thirdPartyConnection vendor connection to use to perform an auth
+     * @return AppUser
+     *
      * @throws AuthenticationFailedException
      * @throws DataCannotBeStoredException
      * @throws NoThirdPartyEmailFoundException
      * @throws ThirdPartyConnectionFailedException
-     * @return AppUser
      */
-    public function signIn()
+    public function authenticate(VendorConnection $thirdPartyConnection)
     {
-        $accessToken = $this->thirdPartyConnection->grantNewAccessToken();
+        $accessToken = $thirdPartyConnection->grantNewAccessToken();
 
-        $thirdPartyUser = $this->thirdPartyConnection->getSelf($accessToken);
+        $thirdPartyUser = $thirdPartyConnection->getSelf($accessToken);
 
-        // SIGNIN ATTEMP
+        // a SIGN-IN attempt
         // check if this is a signin attempt with an existing user account
         $existingAppUser = $this->appUserRepository->getUser($thirdPartyUser->email());
 
-        // if no user account found with the same vendor email as the app email, do a mapping lookup in the storage across all vendors
+        // if no user account found with the same vendor email as the app email,
+        // do a mapping lookup in the storage across all vendors
         if (is_null($existingAppUser)) {
             $mappedUser = $this->storageRepository->getUser($thirdPartyUser->email());
             if (!is_null($mappedUser)) {
-                $existingAppUser = new AppUser($mappedUser->appUserId(), $mappedUser->vendorEmail());
+                $existingAppUser = new ExistingAppUser($mappedUser->appUserId(), $mappedUser->vendorEmail());
             }
         }
 
-        // SIGNUP ATTEMP
+        // a SIGN-UP attempt
         // if no user found previously, let's create a new user as this seems like a signup attempt
         if (is_null($existingAppUser)) {
             $existingAppUser = $this->appUserRepository->create($thirdPartyUser);
-            if (!is_null($existingAppUser)) {
-                $existingAppUser->markAsNewUser();
-            }
         }
 
         // let's add/update the mapping of the newly created or the existing user's access token before we acknowledge
