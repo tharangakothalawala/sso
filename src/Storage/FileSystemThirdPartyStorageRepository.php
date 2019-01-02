@@ -122,9 +122,11 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
     }
 
     /**
+     * Returns an array containing raw third party user mappings.
+     *
      * @return array|null
      */
-    private function getDecodedData()
+    protected function getDecodedData()
     {
         $fileData = file_get_contents($this->fileAbsolutePath());
         if (empty($fileData)) {

@@ -174,3 +174,14 @@ if (!is_null($userId)) {
 # What Next?
 
 To add any missing vendor support and any other storage systems.
+
+# Demo
+
+I have created a demo app and have registered that in Google.
+(Optionally you may go to https://console.developers.google.com to register your own)
+
+```bash
+make demo
+```
+
+Then go to http://localhost:9001/index.php

@@ -14,3 +14,7 @@ phpdoc:
 phpcs:
 	~/.composer/vendor/bin/phpcs --standard=PSR2 src
 
+.PHONY: demo
+demo:
+	php -S localhost:9001 -t examples
+
