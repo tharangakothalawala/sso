@@ -6,7 +6,6 @@
 
 namespace TSK\SSO\ThirdParty\Slack;
 
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class SlackConnectionFactoryTest extends TestCase
@@ -14,7 +13,7 @@ class SlackConnectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnAnInstanceOfAFacebookConnection()
+    public function shouldReturnAnInstanceOfASlackConnection()
     {
         $sut = new SlackConnectionFactory('permissions');
 

@@ -17,4 +17,5 @@ class ThirdParty
     const FACEBOOK = 'facebook';
     const LINKEDIN = 'linkedin';
     const SLACK = 'slack';
+    const TWITTER = 'twitter';
 }
