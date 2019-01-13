@@ -24,32 +24,18 @@ class TwitterApiConfiguration
     /**
      * @var string
      */
-    private $oauthToken;
-
-    /**
-     * @var string
-     */
-    private $oauthTokenSecret;
-
-    /**
-     * @var string
-     */
     private $redirectUrl;
 
     /**
      * TwitterApiConfiguration constructor.
      * @param string $consumerApiKey
      * @param string $consumerApiSecret
-     * @param string $oauthToken
-     * @param string $oauthTokenSecret
      * @param string $redirectUrl
      */
-    public function __construct($consumerApiKey, $consumerApiSecret, $oauthToken, $oauthTokenSecret, $redirectUrl)
+    public function __construct($consumerApiKey, $consumerApiSecret, $redirectUrl)
     {
         $this->consumerApiKey = $consumerApiKey;
         $this->consumerApiSecret = $consumerApiSecret;
-        $this->oauthToken = $oauthToken;
-        $this->oauthTokenSecret = $oauthTokenSecret;
         $this->redirectUrl = $redirectUrl;
     }
 
@@ -67,22 +53,6 @@ class TwitterApiConfiguration
     public function consumerApiSecret()
     {
         return $this->consumerApiSecret;
-    }
-
-    /**
-     * @return string
-     */
-    public function oauthToken()
-    {
-        return $this->oauthToken;
-    }
-
-    /**
-     * @return string
-     */
-    public function oauthTokenSecret()
-    {
-        return $this->oauthTokenSecret;
     }
 
     /**

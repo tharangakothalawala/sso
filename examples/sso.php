@@ -48,10 +48,7 @@ $connectionFactoryCollection->add(
         'http://localhost:9001/sso.php?vendor=google&task=grant'
     )
 );
-$twitterConnectionFactory = new TwitterConnectionFactory(
-    '3064788321-9U9JJXgqRT9gjs3LUd18pGpDV53QrMnFct06VMe',
-    'HdXoVWa1xDYeox0bMICV0y8UhGLGmvrGG6E5bgMAr6PJq'
-);
+$twitterConnectionFactory = new TwitterConnectionFactory();
 $connectionFactoryCollection->add(
     ThirdParty::TWITTER,
     $twitterConnectionFactory->get(

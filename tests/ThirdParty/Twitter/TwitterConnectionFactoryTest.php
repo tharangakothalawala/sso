@@ -15,7 +15,7 @@ class TwitterConnectionFactoryTest extends TestCase
      */
     public function shouldReturnAnInstanceOfATwitterConnection()
     {
-        $sut = new TwitterConnectionFactory('token', 'tokenSecret');
+        $sut = new TwitterConnectionFactory();
 
         $actualConnection = $sut->get('clientId', 'clientSecret', 'www.tsk-webdevelopment.com');
 

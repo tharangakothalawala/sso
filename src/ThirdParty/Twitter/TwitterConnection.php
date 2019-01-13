@@ -41,12 +41,7 @@ class TwitterConnection implements VendorConnection
     public function __construct(TwitterApiConfiguration $configuration)
     {
         $this->configuration = $configuration;
-        $this->twitter = new TwitterOAuth(
-            $this->configuration->consumerApiKey(),
-            $this->configuration->consumerApiSecret(),
-            $this->configuration->oauthToken(),
-            $this->configuration->oauthTokenSecret()
-        );
+        $this->twitter = $this->getTwitter();
     }
 
     /**
@@ -113,6 +108,9 @@ class TwitterConnection implements VendorConnection
     public function getSelf(CommonAccessToken $accessToken)
     {
         $tokenData = explode(self::TOKEN_SEPARATOR, $accessToken->token());
+
+        $this->twitter = $this->getTwitter($tokenData[0], $tokenData[1]);
+
         $userInfo = (array) $this->twitter->get('account/verify_credentials', array(
             'oauth_token' => $tokenData[0],
             'oauth_token_secret' => $tokenData[1],
@@ -142,8 +140,9 @@ class TwitterConnection implements VendorConnection
     public function revokeAccess(CommonAccessToken $accessToken)
     {
         $tokenData = explode(self::TOKEN_SEPARATOR, $accessToken->token());
-/*
-        // it seems it is revoking the main account's token than user specific ones. investigate more
+
+        $this->twitter = $this->getTwitter($tokenData[0], $tokenData[1]);
+
         try {
             $this->twitter->post('oauth/invalidate_token', array(
                 'access_token' => $tokenData[0],
@@ -152,7 +151,20 @@ class TwitterConnection implements VendorConnection
         } catch (TwitterOAuthException $ex) {
             return false;
         }
-//*/
+
         return true;
+    }
+
+    /**
+     * @return TwitterOAuth
+     */
+    private function getTwitter($oauthToken = null, $oauthTokenSecret = null)
+    {
+        return new TwitterOAuth(
+            $this->configuration->consumerApiKey(),
+            $this->configuration->consumerApiSecret(),
+            $oauthToken,
+            $oauthTokenSecret
+        );
     }
 }
