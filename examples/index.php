@@ -66,6 +66,7 @@ if (!empty($_SESSION['userEmail'])) {
                         ThirdParty::GOOGLE => array('profile' => 'https://plus.google.com/%s', 'accounts' => array()),
                         ThirdParty::SLACK => array('profile' => 'https://%s.slack.com/account/profile', 'accounts' => array()),
                         ThirdParty::LINKEDIN => array('profile' => 'https://linkedin.com/pub/%s', 'accounts' => array()),
+                        ThirdParty::TWITTER => array('profile' => 'https://twitter.com/%s', 'accounts' => array()),
                     );
                     $vendorAccounts = $storageRepository->getByUserId($loggedInUser['id']);
                     foreach ($vendorAccounts as $vendorAccount) {
@@ -107,7 +108,7 @@ HTML
                 ?>
                 </ul>
             <?php }?>
-            <div style="width: 20%; margin: 50px auto 0;">
+            <div style="width: 30%; margin: 50px auto 0;">
                 <?php if (!empty($loggedInUser)) { ?>
                     <h3><a href="/sso.php?task=logout" title="Sign in with FaceBook">Logout</a></h3>
                 <?php } else { ?>
@@ -115,6 +116,7 @@ HTML
 
                     <a href="/sso.php?vendor=facebook&task=signin" title="Sign in with FaceBook"><img src="/images/facebook.png" width="46"></a>
                     <a href="/sso.php?vendor=google&task=signin" title="Sign in with Google"><img src="/images/google.png" width="42"></a>
+                    <a href="/sso.php?vendor=twitter&task=signin" title="Sign in with Twitter"><img src="/images/twitter.png" width="42"></a>
                     <a href="/sso.php?vendor=slack&task=signin" title="Sign in with Slack"><img src="/images/slack.png" width="50"></a>
                     <a href="/sso.php?vendor=linkedin&task=signin" title="Sign in with LinkedIn"><img src="/images/linkedin.png" width="46"></a>
                 <?php }?>

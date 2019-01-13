@@ -6,7 +6,6 @@
 
 namespace TSK\SSO\ThirdParty\LinkedIn;
 
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class LinkedInConnectionFactoryTest extends TestCase
@@ -14,7 +13,7 @@ class LinkedInConnectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnAnInstanceOfAFacebookConnection()
+    public function shouldReturnAnInstanceOfALinkedInConnection()
     {
         $sut = new LinkedInConnectionFactory('permissions');
 

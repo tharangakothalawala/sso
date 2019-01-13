@@ -22,6 +22,7 @@ use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 use TSK\SSO\ThirdParty;
+use TSK\SSO\ThirdParty\Twitter\TwitterConnectionFactory;
 
 session_start();
 
@@ -45,6 +46,15 @@ $connectionFactoryCollection->add(
         '156056460465-55sfaeiv4s4nehhuhcccbd27u5cfblhc.apps.googleusercontent.com', // demo real-app id
         'R8ROkwfcjanq6_SskEV287oz', // demo real-app secret
         'http://localhost:9001/sso.php?vendor=google&task=grant'
+    )
+);
+$twitterConnectionFactory = new TwitterConnectionFactory();
+$connectionFactoryCollection->add(
+    ThirdParty::TWITTER,
+    $twitterConnectionFactory->get(
+        'DFjFCIjmSwtNhBMvmfLEZPdPj', // demo real-app api key
+        'ID2nVdPyImNowcDy1tZgqND2y4Z4h45fEsDh3ORKr7KcSNDiTd', // demo real-app api secret
+        'http://localhost:9001/sso.php?vendor=twitter&task=grant'
     )
 );
 

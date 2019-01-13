@@ -6,7 +6,6 @@
 
 namespace TSK\SSO\ThirdParty\Google;
 
-use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class GoogleConnectionFactoryTest extends TestCase
@@ -14,7 +13,7 @@ class GoogleConnectionFactoryTest extends TestCase
     /**
      * @test
      */
-    public function shouldReturnAnInstanceOfAFacebookConnection()
+    public function shouldReturnAnInstanceOfAGoogleConnection()
     {
         $sut = new GoogleConnectionFactory();
 

@@ -20,7 +20,7 @@ interface VendorConnection
     /**
      * Use this to get a link to redirect a user to the third party login
      *
-     * @return string
+     * @return string|null
      */
     public function getGrantUrl();
 
