@@ -67,6 +67,7 @@ if (!empty($_SESSION['userEmail'])) {
                         ThirdParty::SLACK => array('profile' => 'https://%s.slack.com/account/profile', 'accounts' => array()),
                         ThirdParty::LINKEDIN => array('profile' => 'https://linkedin.com/pub/%s', 'accounts' => array()),
                         ThirdParty::TWITTER => array('profile' => 'https://twitter.com/%s', 'accounts' => array()),
+                        ThirdParty::YAHOO => array('profile' => 'https://yahoo.com/%s', 'accounts' => array()),
                     );
                     $vendorAccounts = $storageRepository->getByUserId($loggedInUser['id']);
                     foreach ($vendorAccounts as $vendorAccount) {
@@ -119,6 +120,7 @@ HTML
                     <a href="/sso.php?vendor=twitter&task=signin" title="Sign in with Twitter"><img src="/images/twitter.png" width="42"></a>
                     <a href="/sso.php?vendor=slack&task=signin" title="Sign in with Slack"><img src="/images/slack.png" width="50"></a>
                     <a href="/sso.php?vendor=linkedin&task=signin" title="Sign in with LinkedIn"><img src="/images/linkedin.png" width="46"></a>
+                    <a href="/sso.php?vendor=yahoo&task=signin" title="Sign in with Yahoo"><img src="/images/yahoo.png" width="42"></a>
                 <?php }?>
             </div>
 

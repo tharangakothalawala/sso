@@ -15,14 +15,15 @@ use TSK\SSO\Auth\AppUserAwarePersistingAuthenticator;
 use TSK\SSO\Auth\Exception\AuthenticationFailedException;
 use TSK\SSO\Auth\PersistingAuthenticator;
 use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
+use TSK\SSO\ThirdParty;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyConnectionCollection;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
 use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
-use TSK\SSO\ThirdParty;
 use TSK\SSO\ThirdParty\Twitter\TwitterConnectionFactory;
+use TSK\SSO\ThirdParty\Yahoo\YahooConnectionFactory;
 
 session_start();
 
@@ -55,6 +56,15 @@ $connectionFactoryCollection->add(
         'DFjFCIjmSwtNhBMvmfLEZPdPj', // demo real-app api key
         'ID2nVdPyImNowcDy1tZgqND2y4Z4h45fEsDh3ORKr7KcSNDiTd', // demo real-app api secret
         'http://localhost:9001/sso.php?vendor=twitter&task=grant'
+    )
+);
+$yahooConnectionFactory = new YahooConnectionFactory();
+$connectionFactoryCollection->add(
+    ThirdParty::YAHOO,
+    $yahooConnectionFactory->get(
+        'dj0yJmk9TXZUTmQ0ZXVmT3Q0JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWJl', // demo real-app api key
+        'be4460cc759f313125f3f63d83c60bd280186155', // demo real-app api secret
+        'http://localhost:9001/sso.php?vendor=yahoo&task=grant'
     )
 );
 
