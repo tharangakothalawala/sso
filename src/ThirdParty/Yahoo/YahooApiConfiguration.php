@@ -62,4 +62,14 @@ class YahooApiConfiguration
     {
         return $this->redirectUrl;
     }
+
+    /**
+     * This is just to identify that, we initiated the login sequence (not someone else)
+     *
+     * @return string
+     */
+    public function ourSecretState()
+    {
+        return 'dfeb6ef625880832f61c6f4bd737e11b';
+    }
 }

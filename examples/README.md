@@ -7,7 +7,7 @@ I have created a demo app and have registered that in Google.
 make demo
 ```
 
-Then go to http://localhost:9001/index.php
+Then go to http://localhost/index.php
 
 ### Login Page
 

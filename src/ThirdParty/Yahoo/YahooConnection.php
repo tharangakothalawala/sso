@@ -21,25 +21,27 @@ use TSK\SSO\ThirdParty\VendorConnection;
  */
 class YahooConnection implements VendorConnection
 {
+    const API_BASE = 'https://api.login.yahoo.com/oauth2';
+
     /**
      * @var YahooApiConfiguration
      */
-    private $configuration;
+    private $apiConfiguration;
 
     /**
      * @var CurlRequest
      */
-    private $curl;
+    private $curlClient;
 
     /**
      * YahooConnection constructor.
-     * @param YahooApiConfiguration $configuration
-     * @param CurlRequest $curl
+     * @param YahooApiConfiguration $apiConfiguration
+     * @param CurlRequest $curlClient
      */
-    public function __construct(YahooApiConfiguration $configuration, CurlRequest $curl)
+    public function __construct(YahooApiConfiguration $apiConfiguration, CurlRequest $curlClient)
     {
-        $this->configuration = $configuration;
-        $this->curl = $curl;
+        $this->apiConfiguration = $apiConfiguration;
+        $this->curlClient = $curlClient;
     }
 
     /**
@@ -50,9 +52,11 @@ class YahooConnection implements VendorConnection
     public function getGrantUrl()
     {
         return sprintf(
-            'https://api.login.yahoo.com/oauth2/request_auth?client_id=%s&redirect_uri=%s&response_type=code',
-            $this->configuration->clientId(),
-            $this->configuration->redirectUrl()
+            '%s/request_auth?client_id=%s&redirect_uri=%s&response_type=code&language=en-us&state=%s',
+            self::API_BASE,
+            $this->apiConfiguration->clientId(),
+            urlencode($this->apiConfiguration->redirectUrl()),
+            $this->apiConfiguration->ourSecretState()
         );
     }
 
@@ -64,11 +68,40 @@ class YahooConnection implements VendorConnection
      */
     public function grantNewAccessToken()
     {
-        if (empty($_GET['code'])) {
+        if (empty($_GET['code'])
+            || empty($_GET['state'])
+            || $_GET['state'] !== $this->apiConfiguration->ourSecretState()
+        ) {
             throw new ThirdPartyConnectionFailedException('Invalid request!');
         }
 
-        // @TODO
+        $accessTokenJsonInfo = $this->curlClient->postRaw(
+            sprintf("%s/get_token", self::API_BASE),
+            sprintf(
+                'client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s',
+                $this->apiConfiguration->clientId(),
+                $this->apiConfiguration->clientSecret(),
+                urlencode($this->apiConfiguration->redirectUrl()),
+                $_GET['code']
+            ),
+            array(
+                'Authorization' => sprintf(
+                    'Basic %s',
+                    base64_encode(sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret()))
+                ),
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            )
+        );
+
+        $accessTokenJson = json_decode($accessTokenJsonInfo, true);
+        if (empty($accessTokenJson['access_token'])) {
+            throw new ThirdPartyConnectionFailedException('Failed to establish a new third party vendor connection.');
+        }
+
+        return new CommonAccessToken(
+            $accessTokenJson['access_token'],
+            ThirdParty::YAHOO
+        );
     }
 
     /**
@@ -81,7 +114,13 @@ class YahooConnection implements VendorConnection
      */
     public function getSelf(CommonAccessToken $accessToken)
     {
-        // @TODO
+        $userJsonInfo = $this->curlClient->get(
+            'https://social.yahooapis.com/v1/user/VTLXLASEL66DFZD5HB3PH4FSWM/profile?format=json',
+            array(
+                'Authorization' => sprintf('Bearer %s', $accessToken->token()),
+            )
+        );
+        var_dump($userJsonInfo);exit;
     }
 
     /**

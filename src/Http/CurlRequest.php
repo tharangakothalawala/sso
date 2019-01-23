@@ -60,9 +60,27 @@ class CurlRequest
      */
     public function post($url, array $data = array(), array $headers = array())
     {
-        if (!empty($postData)) {
-            curl_setopt($this->curl, CURLOPT_POST, count($postData));
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postData);
+        if (!empty($data)) {
+            curl_setopt($this->curl, CURLOPT_POST, count($data));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+        }
+
+        return $this->request($url, $headers);
+    }
+
+    /**
+     * makes POST request to a given endpoint using raw data
+     *
+     * @param string $url external url
+     * @param string $rawData [optional] data to post
+     * @param array $headers [optional] http headers if any
+     * @return string
+     */
+    public function postRaw($url, $rawData = null, array $headers = array())
+    {
+        if (!empty($rawData)) {
+            curl_setopt($this->curl, CURLOPT_POST, count($rawData));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $rawData);
         }
 
         return $this->request($url, $headers);
