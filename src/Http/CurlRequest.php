@@ -26,7 +26,6 @@ class CurlRequest
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 120);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 120);
     }
@@ -79,17 +78,28 @@ class CurlRequest
     public function postRaw($url, $rawData = null, array $headers = array())
     {
         if (!empty($rawData)) {
-            curl_setopt($this->curl, CURLOPT_POST, count($rawData));
+            curl_setopt($this->curl, CURLOPT_POST, strlen($rawData));
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, $rawData);
         }
 
         return $this->request($url, $headers);
     }
 
+    /**
+     * @todo: this is ugly, find a solution
+     */
+    public function yahooGet($url, array $headers)
+    {
+        $this->curl = curl_init();
+
+        return $this->get($url, $headers);
+    }
+
     private function request($url, array $headers)
     {
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_REFERER, $url);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
 
         if (!empty($headers)) {
             curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);

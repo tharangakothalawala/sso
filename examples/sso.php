@@ -33,6 +33,7 @@ $vendorName = !empty($_GET['vendor']) ? $_GET['vendor'] : 'google';
 $task = !empty($_GET['task']) ? $_GET['task'] : 'signin';
 
 if ($task === 'logout') {
+    $_SESSION = array();
     session_destroy();
     header("Location: /index.php");
     exit;
@@ -46,7 +47,7 @@ $connectionFactoryCollection->add(
     $googleConnectionFactory->get(
         '156056460465-55sfaeiv4s4nehhuhcccbd27u5cfblhc.apps.googleusercontent.com', // demo real-app id
         'R8ROkwfcjanq6_SskEV287oz', // demo real-app secret
-        'http://localhost/sso.php?vendor=google&task=grant'
+        'http://localhost.com/sso.php?vendor=google&task=grant'
     )
 );
 $twitterConnectionFactory = new TwitterConnectionFactory();
@@ -55,16 +56,16 @@ $connectionFactoryCollection->add(
     $twitterConnectionFactory->get(
         'DFjFCIjmSwtNhBMvmfLEZPdPj', // demo real-app api key
         'ID2nVdPyImNowcDy1tZgqND2y4Z4h45fEsDh3ORKr7KcSNDiTd', // demo real-app api secret
-        'http://localhost/sso.php?vendor=twitter&task=grant'
+        'http://localhost.com/sso.php?vendor=twitter&task=grant'
     )
 );
 $yahooConnectionFactory = new YahooConnectionFactory();
 $connectionFactoryCollection->add(
     ThirdParty::YAHOO,
     $yahooConnectionFactory->get(
-        'dj0yJmk9cElZYTdhYUxMc1l1JnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PWFj', // demo real-app api key
-        'ae92ffe23098804035ea870c1832234a443e3eab', // demo real-app api secret
-        'http://localhost.com/sso.php?vendor=yahoo&task=grant'
+        'dj0yJmk9NGNuMXRLMVlZQmlhJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTY3', // demo real-app api key
+        '8dd4eb902c611d5b231e3385f8abbb54fe3fef7f', // demo real-app api secret
+        'http://localhost.com/sso.php?vendor=yahoo&task=grant' // not that Yahoo doesn't support just localhost as the hostname. You may add a host entry.
     )
 );
 

@@ -19,7 +19,7 @@ class DemoAppUserRepository implements AppUserRepository
     /**
      * @var string
      */
-    private $userDataBase = 'tsk.sso.demo-user-store.json';
+    private $userDataBase;
 
     public function __construct($baseDir)
     {
@@ -40,6 +40,7 @@ class DemoAppUserRepository implements AppUserRepository
     {
         $userId = rand(100, 999);
 
+        $data = $this->getDecodedData();
         $data[$userId] = array(
             'id' => $userId,
             'name' => $thirdPartyUser->name(),

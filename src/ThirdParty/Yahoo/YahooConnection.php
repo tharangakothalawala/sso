@@ -114,13 +114,26 @@ class YahooConnection implements VendorConnection
      */
     public function getSelf(CommonAccessToken $accessToken)
     {
-        $userJsonInfo = $this->curlClient->get(
-            'https://social.yahooapis.com/v1/user/VTLXLASEL66DFZD5HB3PH4FSWM/profile?format=json',
+        $userJsonInfo = $this->curlClient->yahooGet(
+            'https://social.yahooapis.com/v1/user/me/profile?format=json',
             array(
-                'Authorization' => sprintf('Bearer %s', $accessToken->token()),
+                sprintf('Authorization: Bearer %s', $accessToken->token()),
+                'Accept: application/json',
             )
         );
-        var_dump($userJsonInfo);exit;
+
+        $userInfo = json_decode($userJsonInfo, true);
+        if (empty($userInfo['profile']['emails'][0]['handle'])) {
+            throw new NoThirdPartyEmailFoundException('An email address cannot be found from vendor');
+        }
+
+        return new ThirdPartyUser(
+            $userInfo['profile']['guid'],
+            sprintf('%s %s', $userInfo['profile']['givenName'], $userInfo['profile']['familyName']),
+            $userInfo['profile']['emails'][0]['handle'],
+            !empty($userInfo['profile']['image']['imageUrl']) ? $userInfo['profile']['image']['imageUrl'] : '',
+            !empty($userInfo['profile']['gender']) ? $userInfo['profile']['gender'] : ''
+        );
     }
 
     /**
@@ -132,6 +145,7 @@ class YahooConnection implements VendorConnection
      */
     public function revokeAccess(CommonAccessToken $accessToken)
     {
-        // @TODO
+        // cannot find documentation on how to revoke the app's access.
+        return true;
     }
 }
