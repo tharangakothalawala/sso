@@ -33,6 +33,16 @@ interface ThirdPartyStorageRepository
     public function getUser($emailAddress, $vendorName = null);
 
     /**
+     * Returns any vendor MappedUser list for a given Application user.
+     *
+     * @param AppUser $appUser
+     * @return MappedUser[]
+     */
+    public function getByAppUser(AppUser $appUser);
+
+    /**
+     * This will insert or update a vendor connection which contains the user mapping.
+     *
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken

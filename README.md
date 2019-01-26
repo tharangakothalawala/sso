@@ -184,7 +184,7 @@ Optionally you may register your own apps.
 
 * Google : https://console.developers.google.com
 * Twitter : https://developer.twitter.com/en/apps
-* Google : https://developer.yahoo.com/apps
+* Yahoo : https://developer.yahoo.com/apps
 
 #### Host File Entry
 

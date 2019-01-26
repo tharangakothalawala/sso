@@ -77,6 +77,37 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
     }
 
     /**
+     * Returns any vendor MappedUser list for a given Application user.
+     *
+     * @param AppUser $appUser
+     * @return MappedUser[]
+     */
+    public function getByAppUser(AppUser $appUser)
+    {
+        $stmt = $this->dbConnection->prepare("SELECT * FROM `{$this->table}` WHERE `app_user_id` = :appUserId");
+        $appUserId = $appUser->id();
+        if (is_numeric($appUserId)) {
+            $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_INT);
+        } else {
+            $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_STR);
+        }
+        $stmt->execute();
+
+        $connections = array();
+        while ($mappedUser = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $connections[] = new MappedUser(
+                $mappedUser['app_user_id'],
+                $mappedUser['vendor_name'],
+                $mappedUser['vendor_email'],
+                $mappedUser['vendor_access_token'],
+                $mappedUser['vendor_data']
+            );
+        }
+
+        return $connections;
+    }
+
+    /**
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken

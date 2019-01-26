@@ -7,6 +7,7 @@
 namespace TSK\SSO\Storage;
 
 use PHPUnit\Framework\TestCase;
+use TSK\SSO\AppUser\ExistingAppUser;
 use TSK\SSO\AppUser\NewAppUser;
 use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyUser;
@@ -76,7 +77,35 @@ class FileSystemThirdPartyStorageRepositoryTest extends TestCase
     /**
      * @test
      */
-    public function shouldRemoveFromTHirdPartyStore()
+    public function shouldReturnTheMappedVendorConnectionsForAGivenAppUser()
+    {
+        $testUserId = 934;
+        file_put_contents(
+            __DIR__ . '/' . FileSystemThirdPartyStorageRepository::FILE_NAME,
+            '{'
+            . '"vendor3::vendor3-email@test.com":{"app_user_id":100,"vendor_name":"vendor3","vendor_email":"vendor3-email@test.com","vendor_access_token":"token3","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor3-email@test.com\",\"avatar\":\"\",\"gender\":\"unknown\"}","created_at":"2019-01-26 12:58:00"},'
+            . '"vendor1::vendor1-email@test.com":{"app_user_id":934,"vendor_name":"vendor1","vendor_email":"vendor1-email@test.com","vendor_access_token":"token1","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor1-email@test.com\",\"avatar\":\"\",\"gender\":\"male\"}","created_at":"2019-01-26 12:58:00"},'
+            . '"vendor2::vendor2-email@test.com":{"app_user_id":934,"vendor_name":"vendor2","vendor_email":"vendor2-email@test.com","vendor_access_token":"token2","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor2-email@test.com\",\"avatar\":\"\",\"gender\":\"female\"}","created_at":"2019-01-26 12:58:00"}'
+            . '}'
+        );
+
+        $sut = new FileSystemThirdPartyStorageRepository(__DIR__);
+
+        $expectedMappedUsers = array(
+            new MappedUser($testUserId, 'vendor1', 'vendor1-email@test.com', 'token1', '{"id":"id","name":"name","email":"vendor1-email@test.com","avatar":"","gender":"male"}'),
+            new MappedUser($testUserId, 'vendor2', 'vendor2-email@test.com', 'token2', '{"id":"id","name":"name","email":"vendor2-email@test.com","avatar":"","gender":"female"}'),
+        );
+
+        $this->assertEquals(
+            $expectedMappedUsers,
+            $sut->getByAppUser(new ExistingAppUser($testUserId, 'vendor1-email@test.com'))
+        );
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRemoveFromThirdPartyStore()
     {
         file_put_contents(
             __DIR__ . '/' . FileSystemThirdPartyStorageRepository::FILE_NAME,

@@ -6,16 +6,17 @@
  * Goto https://console.developers.google.com to create a test Google App which takes just 5 minutes ;)
  */
 
+use TSK\SSO\AppUser\ExistingAppUser;
+use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\ThirdParty;
 
 include_once __DIR__ . '/../vendor/autoload.php';
-include_once __DIR__ . '/DemoAppThirdPartyStorageRepository.php';
 include_once __DIR__ . '/DemoAppUserRepository.php';
 
 session_start();
 
 $exampleAppUserRepository = new DemoAppUserRepository(__DIR__ . '/store');
-$storageRepository = new DemoAppThirdPartyStorageRepository(__DIR__ . '/store');
+$storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__ . '/store');
 
 $loggedInUser = null;
 if (!empty($_SESSION['userEmail'])) {
@@ -69,7 +70,9 @@ if (!empty($_SESSION['userEmail'])) {
                         ThirdParty::TWITTER => array('profile' => 'https://twitter.com/%s', 'accounts' => array()),
                         ThirdParty::YAHOO => array('profile' => 'https://yahoo.com/%s', 'accounts' => array()),
                     );
-                    $vendorAccounts = $storageRepository->getByUserId($loggedInUser['id']);
+                    $vendorAccounts = $storageRepository->getByAppUser(
+                        new ExistingAppUser($loggedInUser['id'], $loggedInUser['email'])
+                    );
                     foreach ($vendorAccounts as $vendorAccount) {
                         $thirdPartySignInVendors[$vendorAccount->vendorName()]['accounts'][] = $vendorAccount;
                     }
@@ -98,7 +101,8 @@ HTML
 
                             $data = json_decode($vendorAccount->vendorData(), true);
                             $thirdPartyProfilePage = sprintf($vendorData['profile'], $data['id']);
-                            $otherConnectDetails = "<li><small>{$vendorDisplayName} user : <a target='blank' title='click to view'  href='{$thirdPartyProfilePage}'><img src='{$data['avatar']}' width='18' /> {$data['name']} - ({$vendorAccount->vendorEmail()})</a></small>&nbsp;&nbsp;<a href='/sso.php?vendor={$vendor}&task=revoke&id={$i}'><span class='btn-link'>Disconnect</span></a></li>";
+                            $revokeMeta = base64_encode($vendorAccount->vendorEmail());
+                            $otherConnectDetails = "<li><small>{$vendorDisplayName} user : <a target='blank' title='click to view'  href='{$thirdPartyProfilePage}'><img src='{$data['avatar']}' width='18' /> {$data['name']} - ({$vendorAccount->vendorEmail()})</a></small>&nbsp;&nbsp;<a href='/sso.php?vendor={$vendor}&task=revoke&meta={$revokeMeta}'><span class='btn-link'>Disconnect</span></a></li>";
 
                             $connectionsHtml .= "<li><span><ul>{$otherConnectDetails}</ul></span></li>";
                             $i++;

@@ -87,7 +87,9 @@ class YahooConnection implements VendorConnection
             array(
                 'Authorization' => sprintf(
                     'Basic %s',
-                    base64_encode(sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret()))
+                    base64_encode(
+                        sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret())
+                    )
                 ),
                 'Content-Type' => 'application/x-www-form-urlencoded',
             )
@@ -145,7 +147,7 @@ class YahooConnection implements VendorConnection
      */
     public function revokeAccess(CommonAccessToken $accessToken)
     {
-        // cannot find documentation on how to revoke the app's access.
+        // noop : cannot find documentation on how to revoke the app's access.
         return true;
     }
 }

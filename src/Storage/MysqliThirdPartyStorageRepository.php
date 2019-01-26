@@ -86,6 +86,51 @@ SQL
     }
 
     /**
+     * Returns any vendor MappedUser list for a given Application user.
+     *
+     * @param AppUser $appUser
+     * @return MappedUser[]
+     */
+    public function getByAppUser(AppUser $appUser)
+    {
+        $stmt = $this->dbConnection->prepare(<<<SQL
+                SELECT
+                    `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
+                FROM `{$this->table}`
+                WHERE
+                    `app_user_id` = ?
+SQL
+        );
+        $appUserId = $appUser->id();
+        if (is_numeric($appUserId)) {
+            $stmt->bind_param('i', $appUserId);
+        } else {
+            $stmt->bind_param('s', $appUserId);
+        }
+
+        $connections = array();
+        if ($stmt->execute() &&
+            $stmt->store_result() &&
+            $stmt->bind_result($appUserId, $vendor, $vendorEmail, $vendorToken, $vendorData)
+        ) {
+            while ($stmt->fetch()) {
+                $connections[] = new MappedUser(
+                    $appUserId,
+                    $vendor,
+                    $vendorEmail,
+                    $vendorToken,
+                    $vendorData
+                );
+            }
+
+            $stmt->fetch();
+            $stmt->close();
+        }
+
+        return $connections;
+    }
+
+    /**
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
