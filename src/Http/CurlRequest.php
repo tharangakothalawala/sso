@@ -26,7 +26,6 @@ class CurlRequest
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 120);
         curl_setopt($this->curl, CURLOPT_TIMEOUT, 120);
     }
@@ -47,6 +46,8 @@ class CurlRequest
      */
     public function get($url, array $headers = array())
     {
+        curl_setopt($this->curl, CURLOPT_POST, false);
+
         return $this->request($url, $headers);
     }
 
@@ -60,10 +61,30 @@ class CurlRequest
      */
     public function post($url, array $data = array(), array $headers = array())
     {
-        if (!empty($postData)) {
-            curl_setopt($this->curl, CURLOPT_POST, count($postData));
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postData);
+        if (!empty($data)) {
+            curl_setopt($this->curl, CURLOPT_POST, count($data));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
         }
+
+        return $this->request($url, $headers);
+    }
+
+    /**
+     * makes POST request to a given endpoint using URL encoded data
+     *
+     * @param string $url external url
+     * @param string $rawData [optional] data to post
+     * @param array $headers [optional] http headers if any
+     * @return string
+     */
+    public function postUrlEncoded($url, $urlEncodedData = null, array $headers = array())
+    {
+        if (!empty($urlEncodedData)) {
+            curl_setopt($this->curl, CURLOPT_POST, strlen($urlEncodedData));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $urlEncodedData);
+        }
+
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
         return $this->request($url, $headers);
     }
@@ -72,6 +93,7 @@ class CurlRequest
     {
         curl_setopt($this->curl, CURLOPT_URL, $url);
         curl_setopt($this->curl, CURLOPT_REFERER, $url);
+        curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, true);
 
         if (!empty($headers)) {
             curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);

@@ -1,13 +1,29 @@
+
 # Demo
 
-I have created a demo app and have registered that in Google.
-(Optionally you may go to https://console.developers.google.com to register your own)
+#### Creating your own apps [Optional]
 
+I have created several demo apps and have registered them in Google, Twiter & Yahoo.
+Optionally you may register your own apps.
+
+* Google : https://console.developers.google.com
+* Twitter : https://developer.twitter.com/en/apps
+* Yahoo : https://developer.yahoo.com/apps
+
+#### Host File Entry
+
+And add the `localhost.com` into the host file as following. (Linux : `/etc/hosts`, Windows: `C:\Windows\System32\drivers\etc\hosts`)
+
+```bash
+127.0.0.1    localhost.com
+```
+
+#### Start Demo
 ```bash
 make demo
 ```
 
-Then go to http://localhost:9001/index.php
+Then go to http://localhost.com
 
 ### Login Page
 

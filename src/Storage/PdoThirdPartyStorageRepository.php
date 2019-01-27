@@ -77,6 +77,33 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
     }
 
     /**
+     * Returns any vendor MappedUser list for a given Application user.
+     *
+     * @param AppUser $appUser
+     * @return MappedUser[]
+     */
+    public function getByAppUser(AppUser $appUser)
+    {
+        $stmt = $this->dbConnection->prepare("SELECT * FROM `{$this->table}` WHERE `app_user_id` = :appUserId");
+        $appUserId = $appUser->id();
+        $stmt->bindParam(':appUserId', $appUserId, is_numeric($appUserId) ? PDO::PARAM_STR : PDO::PARAM_INT);
+        $stmt->execute();
+
+        $connections = array();
+        while ($mappedUser = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $connections[] = new MappedUser(
+                $mappedUser['app_user_id'],
+                $mappedUser['vendor_name'],
+                $mappedUser['vendor_email'],
+                $mappedUser['vendor_access_token'],
+                $mappedUser['vendor_data']
+            );
+        }
+
+        return $connections;
+    }
+
+    /**
      * @param AppUser $appUser
      * @param ThirdPartyUser $thirdPartyUser
      * @param CommonAccessToken $accessToken
@@ -88,28 +115,28 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
         CommonAccessToken $accessToken
     ) {
         $sql = <<<SQL
-INSERT INTO `{$this->table}`
-(
-    `app_user_id`,
-    `vendor_name`,
-    `vendor_email`,
-    `vendor_access_token`,
-    `vendor_data`,
-    `created_at`
-)
-VALUES
-(
-    :appUserId,
-    :vendorName,
-    :vendorEmail,
-    :vendorToken,
-    :vendorData,
-    NOW()
-)
-ON DUPLICATE KEY UPDATE
-    `vendor_access_token` = VALUES(`vendor_access_token`),
-    `vendor_data` = VALUES(`vendor_data`),
-    `updated_at` = NOW()
+            INSERT INTO `{$this->table}`
+            (
+                `app_user_id`,
+                `vendor_name`,
+                `vendor_email`,
+                `vendor_access_token`,
+                `vendor_data`,
+                `created_at`
+            )
+            VALUES
+            (
+                :appUserId,
+                :vendorName,
+                :vendorEmail,
+                :vendorToken,
+                :vendorData,
+                NOW()
+            )
+            ON DUPLICATE KEY UPDATE
+                `vendor_access_token` = VALUES(`vendor_access_token`),
+                `vendor_data` = VALUES(`vendor_data`),
+                `updated_at` = NOW()
 SQL;
         try {
             $vendorData = json_encode($thirdPartyUser->toArray());

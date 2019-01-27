@@ -16,5 +16,5 @@ phpcs:
 
 .PHONY: demo
 demo:
-	php -S localhost:9001 -t examples
+	php -S localhost:80 -t examples
 

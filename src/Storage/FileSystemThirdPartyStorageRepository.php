@@ -49,11 +49,9 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
         }
 
         foreach ($fileDataDecoded as $vendorAndEmail => $mappedUser) {
-            if (is_null($vendorName)) {
-                $vendorName = $mappedUser['vendor_name'];
-            }
+            $searchVendorName = is_null($vendorName) ? $mappedUser['vendor_name'] : $vendorName;
 
-            $searchKey = sprintf('%s::%s', $vendorName, $emailAddress);
+            $searchKey = sprintf('%s::%s', $searchVendorName, $emailAddress);
             if ($vendorAndEmail !== $searchKey) {
                 continue;
             }
@@ -68,6 +66,38 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
         }
 
         return null;
+    }
+
+    /**
+     * Returns any vendor MappedUser list for a given Application user.
+     * Use this to display all the vendor connections.
+     *
+     * @param AppUser $appUser
+     * @return MappedUser[]
+     */
+    public function getByAppUser(AppUser $appUser)
+    {
+        $fileDataDecoded = $this->getDecodedData();
+        if (is_null($fileDataDecoded)) {
+            return array();
+        }
+
+        $connections = array();
+        foreach ($fileDataDecoded as $vendorAndEmail => $mappedUser) {
+            if ($mappedUser['app_user_id'] != $appUser->id()) {
+                continue;
+            }
+
+            $connections[] = new MappedUser(
+                $mappedUser['app_user_id'],
+                $mappedUser['vendor_name'],
+                $mappedUser['vendor_email'],
+                $mappedUser['vendor_access_token'],
+                $mappedUser['vendor_data']
+            );
+        }
+
+        return $connections;
     }
 
     /**
