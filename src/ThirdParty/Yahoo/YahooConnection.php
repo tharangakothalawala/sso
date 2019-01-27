@@ -75,7 +75,7 @@ class YahooConnection implements VendorConnection
             throw new ThirdPartyConnectionFailedException('Invalid request!');
         }
 
-        $accessTokenJsonInfo = $this->curlClient->postRaw(
+        $accessTokenJsonInfo = $this->curlClient->postUrlEncoded(
             sprintf("%s/get_token", self::API_BASE),
             sprintf(
                 'client_id=%s&client_secret=%s&grant_type=authorization_code&redirect_uri=%s&code=%s',
@@ -90,8 +90,7 @@ class YahooConnection implements VendorConnection
                     base64_encode(
                         sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret())
                     )
-                ),
-                'Content-Type' => 'application/x-www-form-urlencoded',
+                )
             )
         );
 
@@ -116,7 +115,7 @@ class YahooConnection implements VendorConnection
      */
     public function getSelf(CommonAccessToken $accessToken)
     {
-        $userJsonInfo = $this->curlClient->yahooGet(
+        $userJsonInfo = $this->curlClient->get(
             'https://social.yahooapis.com/v1/user/me/profile?format=json',
             array(
                 sprintf('Authorization: Bearer %s', $accessToken->token()),

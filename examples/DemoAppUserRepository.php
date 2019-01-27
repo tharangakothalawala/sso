@@ -81,12 +81,12 @@ class DemoAppUserRepository implements AppUserRepository
      * @param string $email the email address of the application's user entity
      * @return array|null
      */
-    public function getUserAsArray($email)
+    public function getUserAsArray($id)
     {
         $users = $this->getDecodedData();
 
         foreach ($users as $userId => $user) {
-            if ($user['email'] !== $email) {
+            if ($userId !== $id) {
                 continue;
             }
 

@@ -94,38 +94,33 @@ SQL
     public function getByAppUser(AppUser $appUser)
     {
         $stmt = $this->dbConnection->prepare(<<<SQL
-                SELECT
-                    `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
-                FROM `{$this->table}`
-                WHERE
-                    `app_user_id` = ?
+            SELECT
+                `app_user_id`, `vendor_name`, `vendor_email`, `vendor_access_token`, `vendor_data`
+            FROM `{$this->table}`
+            WHERE
+                `app_user_id` = ?
 SQL
         );
         $appUserId = $appUser->id();
-        if (is_numeric($appUserId)) {
-            $stmt->bind_param('i', $appUserId);
-        } else {
-            $stmt->bind_param('s', $appUserId);
-        }
+        $stmt->bind_param(is_numeric($appUserId) ? 'i' : 's', $appUserId);
+        $stmt->execute();
+
+        $stmt->store_result();
+        $vendor = $vendorEmail = $vendorToken = $vendorData = null;
+        $stmt->bind_result($appUserId, $vendor, $vendorEmail, $vendorToken, $vendorData);
 
         $connections = array();
-        if ($stmt->execute() &&
-            $stmt->store_result() &&
-            $stmt->bind_result($appUserId, $vendor, $vendorEmail, $vendorToken, $vendorData)
-        ) {
-            while ($stmt->fetch()) {
-                $connections[] = new MappedUser(
-                    $appUserId,
-                    $vendor,
-                    $vendorEmail,
-                    $vendorToken,
-                    $vendorData
-                );
-            }
-
-            $stmt->fetch();
-            $stmt->close();
+        while ($stmt->fetch()) {
+            $connections[] = new MappedUser(
+                $appUserId,
+                $vendor,
+                $vendorEmail,
+                $vendorToken,
+                $vendorData
+            );
         }
+
+        $stmt->close();
 
         return $connections;
     }
@@ -142,23 +137,23 @@ SQL
         CommonAccessToken $accessToken
     ) {
         $sql = <<<SQL
-INSERT INTO `{$this->table}`
-(
-    `app_user_id`,
-    `vendor_name`,
-    `vendor_email`,
-    `vendor_access_token`,
-    `vendor_data`,
-    `created_at`
-)
-VALUES
-(
-    ?, ?, ?, ?, ?, NOW()
-)
-ON DUPLICATE KEY UPDATE
-    `vendor_access_token` = VALUES(`vendor_access_token`),
-    `vendor_data` = VALUES(`vendor_data`),
-    `updated_at` = NOW()
+            INSERT INTO `{$this->table}`
+            (
+                `app_user_id`,
+                `vendor_name`,
+                `vendor_email`,
+                `vendor_access_token`,
+                `vendor_data`,
+                `created_at`
+            )
+            VALUES
+            (
+                ?, ?, ?, ?, ?, NOW()
+            )
+            ON DUPLICATE KEY UPDATE
+                `vendor_access_token` = VALUES(`vendor_access_token`),
+                `vendor_data` = VALUES(`vendor_data`),
+                `updated_at` = NOW()
 SQL;
 
         $vendorData = json_encode($thirdPartyUser->toArray());
@@ -189,6 +184,6 @@ SQL;
         $sql = "DELETE FROM `{$this->table}` WHERE `vendor_email` = ? AND `vendor_name` = ? LIMIT 1";
         $stmt = $this->dbConnection->prepare($sql);
         $stmt->bind_param("ss", $emailAddress, $vendorName);
-        $stmt->execute();
+        return $stmt->execute();
     }
 }

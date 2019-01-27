@@ -49,11 +49,9 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
         }
 
         foreach ($fileDataDecoded as $vendorAndEmail => $mappedUser) {
-            if (is_null($vendorName)) {
-                $vendorName = $mappedUser['vendor_name'];
-            }
+            $searchVendorName = is_null($vendorName) ? $mappedUser['vendor_name'] : $vendorName;
 
-            $searchKey = sprintf('%s::%s', $vendorName, $emailAddress);
+            $searchKey = sprintf('%s::%s', $searchVendorName, $emailAddress);
             if ($vendorAndEmail !== $searchKey) {
                 continue;
             }

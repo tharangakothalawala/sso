@@ -64,7 +64,7 @@ $connectionFactoryCollection->add(
     $yahooConnectionFactory->get(
         'dj0yJmk9NGNuMXRLMVlZQmlhJnM9Y29uc3VtZXJzZWNyZXQmc3Y9MCZ4PTY3', // demo real-app api key
         '8dd4eb902c611d5b231e3385f8abbb54fe3fef7f', // demo real-app api secret
-        'http://localhost.com/sso.php?vendor=yahoo&task=grant' // not that Yahoo doesn't support just localhost as the hostname. You may add a host entry.
+        'http://localhost.com/sso.php?vendor=yahoo&task=grant' // note that Yahoo doesn't support just localhost as the hostname. You may add a host entry.
     )
 );
 

@@ -86,11 +86,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
     {
         $stmt = $this->dbConnection->prepare("SELECT * FROM `{$this->table}` WHERE `app_user_id` = :appUserId");
         $appUserId = $appUser->id();
-        if (is_numeric($appUserId)) {
-            $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_INT);
-        } else {
-            $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_STR);
-        }
+        $stmt->bindParam(':appUserId', $appUserId, is_numeric($appUserId) ? PDO::PARAM_STR : PDO::PARAM_INT);
         $stmt->execute();
 
         $connections = array();
@@ -119,28 +115,28 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
         CommonAccessToken $accessToken
     ) {
         $sql = <<<SQL
-INSERT INTO `{$this->table}`
-(
-    `app_user_id`,
-    `vendor_name`,
-    `vendor_email`,
-    `vendor_access_token`,
-    `vendor_data`,
-    `created_at`
-)
-VALUES
-(
-    :appUserId,
-    :vendorName,
-    :vendorEmail,
-    :vendorToken,
-    :vendorData,
-    NOW()
-)
-ON DUPLICATE KEY UPDATE
-    `vendor_access_token` = VALUES(`vendor_access_token`),
-    `vendor_data` = VALUES(`vendor_data`),
-    `updated_at` = NOW()
+            INSERT INTO `{$this->table}`
+            (
+                `app_user_id`,
+                `vendor_name`,
+                `vendor_email`,
+                `vendor_access_token`,
+                `vendor_data`,
+                `created_at`
+            )
+            VALUES
+            (
+                :appUserId,
+                :vendorName,
+                :vendorEmail,
+                :vendorToken,
+                :vendorData,
+                NOW()
+            )
+            ON DUPLICATE KEY UPDATE
+                `vendor_access_token` = VALUES(`vendor_access_token`),
+                `vendor_data` = VALUES(`vendor_data`),
+                `updated_at` = NOW()
 SQL;
         try {
             $vendorData = json_encode($thirdPartyUser->toArray());

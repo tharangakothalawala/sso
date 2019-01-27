@@ -87,7 +87,9 @@ $authenticator = new PersistingAuthenticator(
 );
 ```
 
-However there are two classes available for you to use MySQL as the storage.
+##### MySQL
+
+There are two classes available for you to use MySQL as the storage.
 
 For MySQL, I have provided a schema file under sql folder. Please use that.
 
@@ -118,6 +120,21 @@ use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
 $authenticator = new PersistingAuthenticator(
     new YourImplementationOfTheAppUserRepository(),
     new MysqliThirdPartyStorageRepository(new mysqli('localhost', 'foo', 'bar', 'db')),
+);
+```
+
+##### MongoDB
+
+* `TSK\SSO\Storage\PeclMongoDbThirdPartyStorageRepository`
+
+```php
+use TSK\SSO\Auth\PersistingAuthenticator;
+use TSK\SSO\Storage\PeclMongoDbThirdPartyStorageRepository;
+use YouApp\TSKSSO\YourImplementationOfTheAppUserRepository;
+
+$authenticator = new PersistingAuthenticator(
+    new YourImplementationOfTheAppUserRepository(),
+    new PeclMongoDbThirdPartyStorageRepository(new MongoDB\Driver\Manager('mongodb://localhost:27017/yourdb'), 'yourdb'),
 );
 ```
 
@@ -183,8 +200,8 @@ I have created several demo apps and have registered them in Google, Twiter & Ya
 Optionally you may register your own apps.
 
 * Google : https://console.developers.google.com
-* Twitter : https://developer.twitter.com/en/apps
-* Yahoo : https://developer.yahoo.com/apps
+* Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticketed 'Request email address from users' under additional permissions.
+* Yahoo : https://developer.yahoo.com/apps - You must at least select 'Read/Write Public and Private' of 'Profiles (Social Directory)' API permissions.
 
 #### Host File Entry
 

@@ -47,30 +47,36 @@ class FileSystemThirdPartyStorageRepositoryTest extends TestCase
     {
         file_put_contents(
             __DIR__ . '/' . FileSystemThirdPartyStorageRepository::FILE_NAME,
-            '{"vendor::vendor-email@test.com":{"app_user_id":"id","vendor_name":"vendor","vendor_email":"vendor-email@test.com","vendor_access_token":"token","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor-email@test.com\",\"avatar\":\"\",\"gender\":\"\"}","created_at":"2019-01-01 17:23:00"}}'
+            '{'
+            . '"vendor3::vendor3-email@test.com":{"app_user_id":100,"vendor_name":"vendor3","vendor_email":"vendor3-email@test.com","vendor_access_token":"token3","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor3-email@test.com\",\"avatar\":\"\",\"gender\":\"unknown\"}","created_at":"2019-01-26 12:58:00"},'
+            . '"vendor1::vendor1-email@test.com":{"app_user_id":934,"vendor_name":"vendor1","vendor_email":"vendor1-email@test.com","vendor_access_token":"token1","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor1-email@test.com\",\"avatar\":\"\",\"gender\":\"male\"}","created_at":"2019-01-26 12:58:00"},'
+            . '"vendor2::vendor2-email@test.com":{"app_user_id":934,"vendor_name":"vendor2","vendor_email":"vendor2-email@test.com","vendor_access_token":"token2","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor2-email@test.com\",\"avatar\":\"\",\"gender\":\"female\"}","created_at":"2019-01-26 12:58:00"}'
+            . '}'
         );
 
         $sut = new FileSystemThirdPartyStorageRepository(__DIR__);
 
-        $this->assertNull($sut->getUser('vendor-email@test.com', 'unknown_vendor')); // known vendor name is : vendor
-        $this->assertInstanceOf('\TSK\SSO\Storage\MappedUser', $sut->getUser('vendor-email@test.com'));
-        $this->assertSame('id', $sut->getUser('vendor-email@test.com')->appUserId());
-        $this->assertSame('vendor', $sut->getUser('vendor-email@test.com')->vendorName());
-        $this->assertSame('vendor-email@test.com', $sut->getUser('vendor-email@test.com')->vendorEmail());
-        $this->assertSame('token', $sut->getUser('vendor-email@test.com')->vendorToken());
+        $mappedUser = $sut->getUser('vendor2-email@test.com');
+
+        $this->assertNull($sut->getUser('vendor2-email@test.com', 'unknown_vendor')); // known vendor name is : vendor
+        $this->assertInstanceOf('\TSK\SSO\Storage\MappedUser', $mappedUser);
+        $this->assertSame(934, $mappedUser->appUserId());
+        $this->assertSame('vendor2', $mappedUser->vendorName());
+        $this->assertSame('vendor2-email@test.com', $mappedUser->vendorEmail());
+        $this->assertSame('token2', $mappedUser->vendorToken());
         $this->assertSame(
-            '{"id":"id","name":"name","email":"vendor-email@test.com","avatar":"","gender":""}',
-            $sut->getUser('vendor-email@test.com')->vendorData()
+            '{"id":"id","name":"name","email":"vendor2-email@test.com","avatar":"","gender":"female"}',
+            $mappedUser->vendorData()
         );
         $this->assertSame(
             array(
                 'id' => 'id',
                 'name' => 'name',
-                'email' => 'vendor-email@test.com',
+                'email' => 'vendor2-email@test.com',
                 'avatar' => '',
-                'gender' => '',
+                'gender' => 'female',
             ),
-            $sut->getUser('vendor-email@test.com')->decodedVendorData()
+            $mappedUser->decodedVendorData()
         );
     }
 

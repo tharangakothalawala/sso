@@ -19,8 +19,8 @@ $exampleAppUserRepository = new DemoAppUserRepository(__DIR__ . '/store');
 $storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__ . '/store');
 
 $loggedInUser = null;
-if (!empty($_SESSION['userEmail'])) {
-    $loggedInUser = $exampleAppUserRepository->getUserAsArray($_SESSION['userEmail']);
+if (!empty($_SESSION['userId'])) {
+    $loggedInUser = $exampleAppUserRepository->getUserAsArray($_SESSION['userId']);
     if (empty($loggedInUser)) {
         session_destroy();
     }

@@ -46,6 +46,8 @@ class CurlRequest
      */
     public function get($url, array $headers = array())
     {
+        curl_setopt($this->curl, CURLOPT_POST, false);
+
         return $this->request($url, $headers);
     }
 
@@ -68,31 +70,23 @@ class CurlRequest
     }
 
     /**
-     * makes POST request to a given endpoint using raw data
+     * makes POST request to a given endpoint using URL encoded data
      *
      * @param string $url external url
      * @param string $rawData [optional] data to post
      * @param array $headers [optional] http headers if any
      * @return string
      */
-    public function postRaw($url, $rawData = null, array $headers = array())
+    public function postUrlEncoded($url, $urlEncodedData = null, array $headers = array())
     {
-        if (!empty($rawData)) {
-            curl_setopt($this->curl, CURLOPT_POST, strlen($rawData));
-            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $rawData);
+        if (!empty($urlEncodedData)) {
+            curl_setopt($this->curl, CURLOPT_POST, strlen($urlEncodedData));
+            curl_setopt($this->curl, CURLOPT_POSTFIELDS, $urlEncodedData);
         }
 
+        $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
         return $this->request($url, $headers);
-    }
-
-    /**
-     * @todo: this is ugly, find a solution
-     */
-    public function yahooGet($url, array $headers)
-    {
-        $this->curl = curl_init();
-
-        return $this->get($url, $headers);
     }
 
     private function request($url, array $headers)

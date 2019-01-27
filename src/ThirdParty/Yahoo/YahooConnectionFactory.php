@@ -17,6 +17,7 @@ class YahooConnectionFactory implements VendorConnectionFactory
 {
     /**
      * Returns a Yahoo Connection instance using given credentials. Visit the following link for credentials.
+     * You must select 'Read/Write Public and Private' of 'Profiles (Social Directory)' API Permissions for this to work.
      * @see https://developer.yahoo.com/apps
      *
      * @param string $clientId the client id which can be generated at the third party portal
