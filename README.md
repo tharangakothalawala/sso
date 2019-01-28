@@ -155,9 +155,14 @@ $googleConnection = $googleConnectionFactory->get(
     'http://www.your-amazing-app.com/sso/google/grant'
 );
 
-$googleConnection->revokeAccess(
-    new CommonAccessToken('token_that_you_want_revoke', 'google', 'vendor_email')
-);
+$storageRepository = new FileSystemThirdPartyStorageRepository('/tmp');
+$mappedUser = $storageRepository->getUser($_REQUEST['vendorEmail'], $_REQUEST['vendorName']);
+if (!is_null($mappedUser)) {
+    $googleConnection->revokeAccess(
+        new CommonAccessToken($mappedUser->vendorToken(), $mappedUser->vendorName(), $mappedUser->vendorEmail())
+    );
+    $storageRepository->remove($mappedUser->vendorEmail(), $mappedUser->vendorName());
+}
 ```
 
 ## Connecting multiple accounts while logged in.
@@ -196,11 +201,11 @@ To add any missing vendor support and any other storage systems.
 
 #### Creating your own apps [Optional]
 
-I have created several demo apps and have registered them in Google, Twiter & Yahoo.
+I have created several demo apps and have registered them in Google, Twitter & Yahoo.
 Optionally you may register your own apps.
 
 * Google : https://console.developers.google.com
-* Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticketed 'Request email address from users' under additional permissions.
+* Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticked 'Request email address from users' under additional permissions.
 * Yahoo : https://developer.yahoo.com/apps - You must at least select 'Read/Write Public and Private' of 'Profiles (Social Directory)' API permissions.
 
 #### Host File Entry
