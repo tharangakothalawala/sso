@@ -1,5 +1,6 @@
 # IDEs
 /.idea
+/nbproject
 
 # Composer
 /vendor/
@@ -7,5 +8,5 @@
 
 # Other
 /phpdoc
-examples/store/
+*.json
 
