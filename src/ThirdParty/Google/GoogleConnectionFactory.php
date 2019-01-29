@@ -29,7 +29,6 @@ class GoogleConnectionFactory implements VendorConnectionFactory
                 $clientId,
                 $clientSecret,
                 array(
-                    Google_Service_Plus::PLUS_ME,
                     Google_Service_Plus::USERINFO_EMAIL,
                     Google_Service_Plus::USERINFO_PROFILE,
                 ),

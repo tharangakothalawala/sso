@@ -13,6 +13,7 @@ namespace TSK\SSO;
  */
 class ThirdParty
 {
+    const GITHUB = 'github';
     const GOOGLE = 'google';
     const FACEBOOK = 'facebook';
     const LINKEDIN = 'linkedin';

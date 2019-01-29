@@ -5,7 +5,7 @@
  *
  * This is similar to the PersistingAuthenticator version but is user aware.
  * Meaning this can be used to link third party connections while the user is logged in. (user aware).
- * use this if you want to connect & use multiple vendor login such as Facebook and/or Google while logged in.
+ * use this if you want to connect & use multiple vendor logins such as Facebook and/or Google while logged in.
  */
 
 namespace TSK\SSO\Auth;

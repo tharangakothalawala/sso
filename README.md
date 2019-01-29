@@ -8,6 +8,16 @@ This is a library which can provision new accounts and to authenticate users uti
 [![Code Coverage](https://img.shields.io/scrutinizer/coverage/g/tharangakothalawala/sso.svg?style=flat-square)](https://scrutinizer-ci.com/g/tharangakothalawala/sso)
 [![Total Downloads](https://poser.pugx.org/tharangakothalawala/sso/d/total.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 
+# Supported Vendors
+
+* Facebook
+* GitHub
+* Google
+* LinkedIn
+* Slack
+* Twitter
+* Yahoo
+
 # Structure
 
 There are three(3) main functions.
@@ -201,9 +211,10 @@ To add any missing vendor support and any other storage systems.
 
 #### Creating your own apps [Optional]
 
-I have created several demo apps and have registered them in Google, Twitter & Yahoo.
+I have created several demo apps and have registered them in GitHub, Google, Twitter & Yahoo.
 Optionally you may register your own apps.
 
+* GitHub : https://github.com/settings/developers
 * Google : https://console.developers.google.com
 * Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticked 'Request email address from users' under additional permissions.
 * Yahoo : https://developer.yahoo.com/apps - You must at least select 'Read/Write Public and Private' of 'Profiles (Social Directory)' API permissions.

@@ -21,6 +21,7 @@ use TSK\SSO\ThirdParty\ThirdPartyConnectionCollection;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
 use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
+use TSK\SSO\ThirdParty\GitHub\GitHubConnectionFactory;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 use TSK\SSO\ThirdParty\Twitter\TwitterConnectionFactory;
 use TSK\SSO\ThirdParty\Yahoo\YahooConnectionFactory;
@@ -67,6 +68,15 @@ $connectionFactoryCollection->add(
         'http://localhost.com/sso.php?vendor=yahoo&task=grant' // note that Yahoo doesn't support just localhost as the hostname. You may add a host entry.
     )
 );
+$gitHubConnectionFactory = new GitHubConnectionFactory('SSO Demo');
+$connectionFactoryCollection->add(
+    ThirdParty::GITHUB,
+    $gitHubConnectionFactory->get(
+        'bcc3b8b882be87a2cfde', // demo real-app api key
+        '38c270aa36ad2700cc275f4f268fb464d79ab730', // demo real-app api secret
+        'http://localhost.com/sso.php?vendor=github&task=grant'
+    )
+);
 
 try {
     $thirdPartyConnection = $connectionFactoryCollection->getByVendor($vendorName);
@@ -76,8 +86,8 @@ try {
     exit;
 }
 
-$exampleAppUserRepository = new DemoAppUserRepository(__DIR__ . '/store');
-$storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__ . '/store');
+$exampleAppUserRepository = new DemoAppUserRepository(__DIR__);
+$storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__);
 
 switch ($task) {
     case 'signin':

@@ -38,7 +38,7 @@ class CurlRequest
     }
 
     /**
-     * makes GET request to a given endpoint
+     * makes a GET request to a given endpoint
      *
      * @param string $url external url
      * @param array $headers http headers if any [optional]
@@ -52,7 +52,7 @@ class CurlRequest
     }
 
     /**
-     * makes POST request to a given endpoint
+     * makes a POST request to a given endpoint
      *
      * @param string $url external url
      * @param array $data [optional] data to post
@@ -70,7 +70,7 @@ class CurlRequest
     }
 
     /**
-     * makes POST request to a given endpoint using URL encoded data
+     * makes a POST request to a given endpoint using URL encoded data
      *
      * @param string $url external url
      * @param string $rawData [optional] data to post
@@ -85,6 +85,24 @@ class CurlRequest
         }
 
         $headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+        return $this->request($url, $headers);
+    }
+
+    /**
+     * makes a DELETE request to a given endpoint using Basic Authentication as per RFC-2617
+     * @see https://www.ietf.org/rfc/rfc2617.txt
+     *
+     * @param string $url external url
+     * @param string $basicAuthData this should be in format username:password
+     * @param array $headers http headers if any [optional]
+     * @return string
+     */
+    public function deleteWithBasicAuth($url, $basicAuthData, array $headers = array())
+    {
+        curl_setopt($this->curl, CURLOPT_POST, false);
+        curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        curl_setopt($this->curl, CURLOPT_USERPWD, $basicAuthData);
 
         return $this->request($url, $headers);
     }

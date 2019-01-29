@@ -1,15 +1,15 @@
 <?php
 /**
  * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
- * @date 22-01-2019
+ * @date 29-01-2019
  */
 
-namespace TSK\SSO\ThirdParty\Yahoo;
+namespace TSK\SSO\ThirdParty\GitHub;
 
 /**
- * @package TSK\SSO\ThirdParty\Yahoo
+ * @package TSK\SSO\ThirdParty\GitHub
  */
-class YahooApiConfiguration
+class GitHubApiConfiguration
 {
     /**
      * @var string
@@ -27,16 +27,23 @@ class YahooApiConfiguration
     private $redirectUrl;
 
     /**
-     * YahooApiConfiguration constructor.
+     * @var string
+     */
+    private $oauthAppName;
+
+    /**
+     * GitHubApiConfiguration constructor.
      * @param string $clientId
      * @param string $clientSecret
      * @param string $redirectUrl
+     * @param string $oauthAppName
      */
-    public function __construct($clientId, $clientSecret, $redirectUrl)
+    public function __construct($clientId, $clientSecret, $redirectUrl, $oauthAppName)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
         $this->redirectUrl = $redirectUrl;
+        $this->oauthAppName = $oauthAppName;
     }
 
     /**
@@ -61,6 +68,14 @@ class YahooApiConfiguration
     public function redirectUrl()
     {
         return $this->redirectUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function oauthAppName()
+    {
+        return $this->oauthAppName;
     }
 
     /**

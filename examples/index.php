@@ -15,8 +15,8 @@ include_once __DIR__ . '/DemoAppUserRepository.php';
 
 session_start();
 
-$exampleAppUserRepository = new DemoAppUserRepository(__DIR__ . '/store');
-$storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__ . '/store');
+$exampleAppUserRepository = new DemoAppUserRepository(__DIR__);
+$storageRepository = new FileSystemThirdPartyStorageRepository(__DIR__);
 
 $loggedInUser = null;
 if (!empty($_SESSION['userId'])) {
@@ -69,6 +69,7 @@ if (!empty($_SESSION['userId'])) {
                         ThirdParty::LINKEDIN => array('profile' => 'https://linkedin.com/pub/%s', 'accounts' => array()),
                         ThirdParty::TWITTER => array('profile' => 'https://twitter.com/%s', 'accounts' => array()),
                         ThirdParty::YAHOO => array('profile' => 'https://yahoo.com/%s', 'accounts' => array()),
+                        ThirdParty::GITHUB => array('profile' => 'https://github.com/%s', 'accounts' => array()),
                     );
                     $vendorAccounts = $storageRepository->getByAppUser(
                         new ExistingAppUser($loggedInUser['id'], $loggedInUser['email'])
@@ -113,7 +114,7 @@ HTML
                 ?>
                 </ul>
             <?php }?>
-            <div style="width: 30%; margin: 50px auto 0;">
+            <div style="width: 40%; margin: 50px auto 0;">
                 <?php if (!empty($loggedInUser)) { ?>
                     <h3><a href="/sso.php?task=logout" title="Sign in with FaceBook">Logout</a></h3>
                 <?php } else { ?>
@@ -125,6 +126,7 @@ HTML
                     <a href="/sso.php?vendor=slack&task=signin" title="Sign in with Slack"><img src="/images/slack.png" width="50"></a>
                     <a href="/sso.php?vendor=linkedin&task=signin" title="Sign in with LinkedIn"><img src="/images/linkedin.png" width="46"></a>
                     <a href="/sso.php?vendor=yahoo&task=signin" title="Sign in with Yahoo"><img src="/images/yahoo.png" width="42"></a>
+                    <a href="/sso.php?vendor=github&task=signin" title="Sign in with GitHub"><img src="/images/github.png" width="42"></a>
                 <?php }?>
             </div>
 
