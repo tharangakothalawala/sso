@@ -23,6 +23,7 @@ use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;
 use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
 use TSK\SSO\ThirdParty\GitHub\GitHubConnectionFactory;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
+use TSK\SSO\ThirdParty\Microsoft\MicrosoftConnectionFactory;
 use TSK\SSO\ThirdParty\Twitter\TwitterConnectionFactory;
 use TSK\SSO\ThirdParty\Yahoo\YahooConnectionFactory;
 
@@ -75,6 +76,15 @@ $connectionFactoryCollection->add(
         'bcc3b8b882be87a2cfde', // demo real-app api key
         '38c270aa36ad2700cc275f4f268fb464d79ab730', // demo real-app api secret
         'http://localhost.com/sso.php?vendor=github&task=grant'
+    )
+);
+$microsoftConnectionFactory = new MicrosoftConnectionFactory('SSO Demo');
+$connectionFactoryCollection->add(
+    ThirdParty::MICROSOFT,
+    $microsoftConnectionFactory->get(
+        '25a984d2-7788-4fa6-98e9-cc62f83926c4', // demo real-app api key
+        '', // demo real-app api secret
+        'http://localhost.com/sso.php?vendor=microsoft&task=grant'
     )
 );
 

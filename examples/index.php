@@ -70,6 +70,7 @@ if (!empty($_SESSION['userId'])) {
                         ThirdParty::TWITTER => array('profile' => 'https://twitter.com/%s', 'accounts' => array()),
                         ThirdParty::YAHOO => array('profile' => 'https://yahoo.com/%s', 'accounts' => array()),
                         ThirdParty::GITHUB => array('profile' => 'https://github.com/%s', 'accounts' => array()),
+                        ThirdParty::MICROSOFT => array('profile' => 'https://microsoft.com/%s', 'accounts' => array()),
                     );
                     $vendorAccounts = $storageRepository->getByAppUser(
                         new ExistingAppUser($loggedInUser['id'], $loggedInUser['email'])
@@ -127,6 +128,7 @@ HTML
                     <a href="/sso.php?vendor=linkedin&task=signin" title="Sign in with LinkedIn"><img src="/images/linkedin.png" width="46"></a>
                     <a href="/sso.php?vendor=yahoo&task=signin" title="Sign in with Yahoo"><img src="/images/yahoo.png" width="42"></a>
                     <a href="/sso.php?vendor=github&task=signin" title="Sign in with GitHub"><img src="/images/github.png" width="42"></a>
+                    <a href="/sso.php?vendor=microsoft&task=signin" title="Sign in with Microsoft"><img src="/images/microsoft.png" width="40"></a>
                 <?php }?>
             </div>
 

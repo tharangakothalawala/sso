@@ -17,6 +17,7 @@ class ThirdParty
     const GOOGLE = 'google';
     const FACEBOOK = 'facebook';
     const LINKEDIN = 'linkedin';
+    const MICROSOFT = 'microsoft';
     const SLACK = 'slack';
     const TWITTER = 'twitter';
     const YAHOO = 'yahoo';
