@@ -2,9 +2,10 @@
 
 #### Creating your own apps [Optional]
 
-I have created several demo apps and have registered them in GitHub, Google, Twitter & Yahoo.
-Optionally you may register your own apps.
+I have created several demo apps and have registered them in Amazon, GitHub, Google, Twitter & Yahoo.
+Optionally you may register your own apps if you want to test.
 
+* Amazon : https://sellercentral.amazon.com/hz/home
 * GitHub : https://github.com/settings/developers
 * Google : https://console.developers.google.com
 * Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticked 'Request email address from users' under additional permissions.

@@ -156,7 +156,7 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
      *
      * @return array|null
      */
-    protected function getDecodedData()
+    private function getDecodedData()
     {
         $fileData = file_get_contents($this->fileAbsolutePath());
         if (empty($fileData)) {
