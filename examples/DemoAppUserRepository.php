@@ -55,7 +55,7 @@ class DemoAppUserRepository implements AppUserRepository
     }
 
     /**
-     * Returns an application's user representation or null if no user if found.
+     * Returns an application's user representation or null if no user found.
      *
      * @param string $email the email address of the application's user entity
      * @return ExistingAppUser|null

@@ -1,5 +1,5 @@
 # TSK Single Sign On
-This is a library which can provision new accounts and to authenticate users utilizing third party vendor connections.
+This is a library which can provision new accounts and can authenticate users utilizing third party vendor connections.
 
 [![Latest Stable Version](https://poser.pugx.org/tharangakothalawala/sso/v/stable.svg)](https://packagist.org/packages/tharangakothalawala/sso)
 [![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/tharangakothalawala/sso)
@@ -10,6 +10,7 @@ This is a library which can provision new accounts and to authenticate users uti
 
 # Supported Vendors
 
+* Amazon
 * Facebook
 * GitHub
 * Google
@@ -150,29 +151,16 @@ $authenticator = new PersistingAuthenticator(
 
 Of course you can use your own storage by just implementing this interface : `TSK\SSO\Storage\ThirdPartyStorageRepository`.
 
-## Revoking access to your client application
-
-In order to revoke your app from the vendor, you must have an active access token.
+## Revoking vendor access to your client application
 
 ```php
-use TSK\SSO\ThirdParty\CommonAccessToken;
-use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
+use TSK\SSO\ThirdParty\VendorConnectionRevoker;
 
-$googleConnectionFactory = new GoogleConnectionFactory();
-$googleConnection = $googleConnectionFactory->get(
-    'google_client_id',
-    'google_client_secret',
-    'http://www.your-amazing-app.com/sso/google/grant'
+$vendorConnectionRevoker = new VendorConnectionRevoker(
+    $googleConnection, // the vendor connection
+    /* `TSK\SSO\Storage\ThirdPartyStorageRepository` implementation */
 );
-
-$storageRepository = new FileSystemThirdPartyStorageRepository('/tmp');
-$mappedUser = $storageRepository->getUser($_REQUEST['vendorEmail'], $_REQUEST['vendorName']);
-if (!is_null($mappedUser)) {
-    $googleConnection->revokeAccess(
-        new CommonAccessToken($mappedUser->vendorToken(), $mappedUser->vendorName(), $mappedUser->vendorEmail())
-    );
-    $storageRepository->remove($mappedUser->vendorEmail(), $mappedUser->vendorName());
-}
+$vendorConnectionRevoker->revoke($vendorEmail, $vendorName); // returns a bool
 ```
 
 ## Connecting multiple accounts while logged in.
@@ -211,9 +199,10 @@ To add any missing vendor support and any other storage systems.
 
 #### Creating your own apps [Optional]
 
-I have created several demo apps and have registered them in GitHub, Google, Twitter & Yahoo.
-Optionally you may register your own apps.
+I have created several demo apps and have registered them in Amazon, GitHub, Google, Twitter & Yahoo.
+Optionally you may register your own apps if you want to test.
 
+* Amazon : https://sellercentral.amazon.com/hz/home
 * GitHub : https://github.com/settings/developers
 * Google : https://console.developers.google.com
 * Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticked 'Request email address from users' under additional permissions.
