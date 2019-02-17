@@ -6,6 +6,7 @@
 
 namespace TSK\SSO\ThirdParty;
 
+use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\Storage\ThirdPartyStorageRepository;
 
 /**
@@ -27,15 +28,17 @@ class VendorConnectionRevoker
 
     /**
      * @param VendorConnection $thirdPartyConnection vendor connection to use for the revoke action
-     * @param ThirdPartyStorageRepository $storageRepository the storage implementation
-     *        which was used to store the data for the first time.
+     * @param ThirdPartyStorageRepository $storageRepository [optional] the storage implementation
+     *        which was used to store the data for the first time. By default uses file system as the storage.
      */
     public function __construct(
         VendorConnection $thirdPartyConnection,
-        ThirdPartyStorageRepository $storageRepository
+        ThirdPartyStorageRepository $storageRepository = null
     ) {
         $this->thirdPartyConnection = $thirdPartyConnection;
-        $this->storageRepository = $storageRepository;
+        $this->storageRepository = is_null($storageRepository)
+            ? new FileSystemThirdPartyStorageRepository()
+            : $storageRepository;
     }
 
     /**

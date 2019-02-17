@@ -158,7 +158,7 @@ use TSK\SSO\ThirdParty\VendorConnectionRevoker;
 
 $vendorConnectionRevoker = new VendorConnectionRevoker(
     $googleConnection, // the vendor connection
-    /* `TSK\SSO\Storage\ThirdPartyStorageRepository` implementation */
+    // [optional] `TSK\SSO\Storage\ThirdPartyStorageRepository` implementation. File system storage is used by default
 );
 $vendorConnectionRevoker->revoke($vendorEmail, $vendorName); // returns a bool
 ```
