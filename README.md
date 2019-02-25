@@ -16,6 +16,7 @@ This is a library which can provision new accounts and can authenticate users ut
 * Google
 * LinkedIn
 * Slack
+* Spotify
 * Twitter
 * Yahoo
 
@@ -206,6 +207,7 @@ Optionally you may register your own apps if you want to test.
 * GitHub : https://github.com/settings/developers
 * Google : https://console.developers.google.com
 * Twitter : https://developer.twitter.com/en/apps - You must at least have 'Read-only' access permission and have ticked 'Request email address from users' under additional permissions.
+* Spotify : https://developer.spotify.com/dashboard/applications
 * Yahoo : https://developer.yahoo.com/apps - You must at least select 'Read/Write Public and Private' of 'Profiles (Social Directory)' API permissions.
 
 #### Host File Entry

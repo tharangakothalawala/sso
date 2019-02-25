@@ -25,6 +25,7 @@ use TSK\SSO\ThirdParty\Exception\UnknownVendorRequestException;
 use TSK\SSO\ThirdParty\GitHub\GitHubConnectionFactory;
 use TSK\SSO\ThirdParty\Google\GoogleConnectionFactory;
 use TSK\SSO\ThirdParty\Twitter\TwitterConnectionFactory;
+use TSK\SSO\ThirdParty\Spotify\SpotifyConnectionFactory;
 use TSK\SSO\ThirdParty\VendorConnectionRevoker;
 use TSK\SSO\ThirdParty\Yahoo\YahooConnectionFactory;
 
@@ -87,6 +88,15 @@ $connectionFactoryCollection->add(
         'amzn1.application-oa2-client.32d417021c994d9983136748ab40508f', // demo real-app api key
         'edcdbf37d4cc7af632bd6dea7be4d9ec21e30978c095982576614b29c9b6a6a3', // demo real-app api secret
         sprintf(CALLBACK_URL, ThirdParty::AMAZON)
+    )
+);
+$spotifyConnectionFactory = new SpotifyConnectionFactory();
+$connectionFactoryCollection->add(
+    ThirdParty::SPOTIFY,
+    $spotifyConnectionFactory->get(
+        '40de952ae63b403f894e47a6314bc64d', // demo real-app client id
+        '38eac415d0eb473bb0b4d1d732bc25d3', // demo real-app client secret
+        sprintf(CALLBACK_URL, ThirdParty::SPOTIFY)
     )
 );
 
