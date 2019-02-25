@@ -71,6 +71,7 @@ if (!empty($_SESSION['userId'])) {
                         ThirdParty::YAHOO => array('profile' => 'https://yahoo.com/%s', 'accounts' => array()),
                         ThirdParty::GITHUB => array('profile' => 'https://github.com/%s', 'accounts' => array()),
                         ThirdParty::AMAZON => array('profile' => 'https://amazon.com/%s', 'accounts' => array()),
+                        ThirdParty::SPOTIFY => array('profile' => 'https://open.spotify.com/user/%s', 'accounts' => array()),
                     );
                     $vendorAccounts = $storageRepository->getByAppUser(
                         new ExistingAppUser($loggedInUser['id'], $loggedInUser['email'])
@@ -115,7 +116,7 @@ HTML
                 ?>
                 </ul>
             <?php }?>
-            <div style="width: 40%; margin: 50px auto 0;">
+            <div style="width: 45%; margin: 50px auto 0;">
                 <?php if (!empty($loggedInUser)) { ?>
                     <h3><a href="/sso.php?task=logout" title="Sign in with FaceBook">Logout</a></h3>
                 <?php } else { ?>
@@ -129,6 +130,7 @@ HTML
                     <a href="/sso.php?vendor=yahoo&task=signin" title="Sign in with Yahoo"><img src="/images/yahoo.png" width="42"></a>
                     <a href="/sso.php?vendor=github&task=signin" title="Sign in with GitHub"><img src="/images/github.png" width="42"></a>
                     <a href="/sso.php?vendor=amazon&task=signin" title="Sign in with Amazon"><img src="/images/amazon.png" width="42"></a>
+                    <a href="/sso.php?vendor=spotify&task=signin" title="Sign in with Spotify"><img src="/images/spotify.png" width="42"></a>
                 <?php }?>
             </div>
 
