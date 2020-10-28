@@ -22,4 +22,5 @@ class ThirdParty
     const SPOTIFY = 'spotify';
     const TWITTER = 'twitter';
     const YAHOO = 'yahoo';
+    const ZOOM = 'zoom';
 }
