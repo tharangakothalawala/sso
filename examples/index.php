@@ -118,7 +118,7 @@ HTML
             <?php }?>
             <div style="width: 45%; margin: 50px auto 0;">
                 <?php if (!empty($loggedInUser)) { ?>
-                    <h3><a href="/sso.php?task=logout" title="Sign in with FaceBook">Logout</a></h3>
+                    <h3><a href="/sso.php?task=logout" title="Click to log out">Logout</a></h3>
                 <?php } else { ?>
                     <h3>Sign in</h3>
 

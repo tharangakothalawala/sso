@@ -17,7 +17,6 @@ use TSK\SSO\Storage\Exception\DataCannotBeStoredException;
 use TSK\SSO\Storage\FileSystemThirdPartyStorageRepository;
 use TSK\SSO\ThirdParty;
 use TSK\SSO\ThirdParty\Amazon\AmazonConnectionFactory;
-use TSK\SSO\ThirdParty\CommonAccessToken;
 use TSK\SSO\ThirdParty\ThirdPartyConnectionCollection;
 use TSK\SSO\ThirdParty\Exception\NoThirdPartyEmailFoundException;
 use TSK\SSO\ThirdParty\Exception\ThirdPartyConnectionFailedException;

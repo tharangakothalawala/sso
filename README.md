@@ -19,6 +19,7 @@ This is a library which can provision new accounts and can authenticate users ut
 * Spotify
 * Twitter
 * Yahoo
+* Zoom
 
 # Structure
 
