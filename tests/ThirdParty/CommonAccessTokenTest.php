@@ -17,6 +17,7 @@ class CommonAccessTokenTest extends TestCase
     {
         $token = array(
             'token' => 'the-token',
+            'refresh_token' => 'the-refresh-token',
             'vendor' => 'test-vendor',
             'email' => 'vendor-email@test.com',
         );
@@ -26,9 +27,11 @@ class CommonAccessTokenTest extends TestCase
             $token['vendor'],
             $token['email']
         );
+        $sut->setRefreshToken($token['refresh_token']);
 
         $this->assertSame($token['token'], $sut->token());
         $this->assertSame($token['vendor'], $sut->vendor());
         $this->assertSame($token['email'], $sut->email());
+        $this->assertSame($token['refresh_token'], $sut->getRefreshToken());
     }
 }
