@@ -122,6 +122,7 @@ class FileSystemThirdPartyStorageRepository implements ThirdPartyStorageReposito
             'vendor_name' => $accessToken->vendor(),
             'vendor_email' => $thirdPartyUser->email(),
             'vendor_access_token' => $accessToken->token(),
+            'vendor_refresh_token' => $accessToken->getRefreshToken(),
             'vendor_data' => json_encode($thirdPartyUser->toArray()),
             'created_at' => date('Y-m-d H:i:00'),
         );

@@ -121,6 +121,7 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
                 `vendor_name`,
                 `vendor_email`,
                 `vendor_access_token`,
+                `vendor_refresh_token`,
                 `vendor_data`,
                 `created_at`
             )
@@ -130,11 +131,13 @@ class PdoThirdPartyStorageRepository implements ThirdPartyStorageRepository
                 :vendorName,
                 :vendorEmail,
                 :vendorToken,
+                :vendorRefreshToken,
                 :vendorData,
                 NOW()
             )
             ON DUPLICATE KEY UPDATE
                 `vendor_access_token` = VALUES(`vendor_access_token`),
+                `vendor_refresh_token` = VALUES(`vendor_refresh_token`),
                 `vendor_data` = VALUES(`vendor_data`),
                 `updated_at` = NOW()
 SQL;
@@ -144,12 +147,14 @@ SQL;
             $vendorName = $accessToken->vendor();
             $vendorEmail = $thirdPartyUser->email();
             $vendorToken = $accessToken->token();
+            $vendorRefreshToken = $accessToken->getRefreshToken();
 
             $stmt = $this->dbConnection->prepare($sql);
             $stmt->bindParam(':appUserId', $appUserId, PDO::PARAM_STR);
             $stmt->bindParam(':vendorName', $vendorName, PDO::PARAM_STR);
             $stmt->bindParam(':vendorEmail', $vendorEmail, PDO::PARAM_STR);
             $stmt->bindParam(':vendorToken', $vendorToken, PDO::PARAM_STR);
+            $stmt->bindParam(':vendorRefreshToken', $vendorRefreshToken, PDO::PARAM_STR);
             $stmt->bindParam(':vendorData', $vendorData, PDO::PARAM_STR);
             $stmt->execute();
         } catch (PDOException $ex) {

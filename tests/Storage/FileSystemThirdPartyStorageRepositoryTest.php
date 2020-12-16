@@ -35,7 +35,7 @@ class FileSystemThirdPartyStorageRepositoryTest extends TestCase
         $actualContents = file_get_contents(__DIR__ . '/' . FileSystemThirdPartyStorageRepository::FILE_NAME);
 
         $this->assertSame(
-            sprintf('{"vendor::vendor-email@test.com":{"app_user_id":"id","vendor_name":"vendor","vendor_email":"vendor-email@test.com","vendor_access_token":"token","vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor-email@test.com\",\"avatar\":\"\",\"gender\":\"\"}","created_at":"%s"}}', $now),
+            sprintf('{"vendor::vendor-email@test.com":{"app_user_id":"id","vendor_name":"vendor","vendor_email":"vendor-email@test.com","vendor_access_token":"token","vendor_refresh_token":null,"vendor_data":"{\"id\":\"id\",\"name\":\"name\",\"email\":\"vendor-email@test.com\",\"avatar\":\"\",\"gender\":\"\"}","created_at":"%s"}}', $now),
             $actualContents
         );
     }

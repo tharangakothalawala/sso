@@ -72,6 +72,15 @@ class ZoomConnection implements VendorConnection
             throw new ThirdPartyConnectionFailedException('Invalid request!');
         }
 
+        $headers = array(
+            'Authorization' => sprintf(
+                'Basic %s',
+                base64_encode(
+                    sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret())
+                )
+            ),
+        );
+
         $accessTokenJsonInfo = $this->curlClient->postUrlEncoded(
             sprintf("%s/oauth/token", self::API_BASE),
             sprintf(
@@ -81,14 +90,7 @@ class ZoomConnection implements VendorConnection
                 urlencode($this->apiConfiguration->redirectUrl()),
                 $_GET['code']
             ),
-            array(
-                'Authorization' => sprintf(
-                    'Basic %s',
-                    base64_encode(
-                        sprintf('%s:%s', $this->apiConfiguration->clientId(), $this->apiConfiguration->clientSecret())
-                    )
-                ),
-            )
+            $headers
         );
 
         $accessTokenInfo = json_decode($accessTokenJsonInfo, true);
@@ -98,7 +100,26 @@ class ZoomConnection implements VendorConnection
             );
         }
 
-        return new CommonAccessToken($accessTokenInfo['access_token'], ThirdParty::ZOOM);
+        $accessToken = new CommonAccessToken($accessTokenInfo['access_token'], ThirdParty::ZOOM);
+        if (!empty($accessTokenInfo['refresh_token'])) {
+            $accessToken->setRefreshToken($accessTokenInfo['refresh_token']);
+        }
+
+        /*
+        $refreshTokenJsonInfo = $this->curlClient->post(
+            sprintf("%s/oauth/token?grant_type=refresh_token&refresh_token=%s", self::API_BASE, $accessTokenInfo['refresh_token']),
+            array(),
+            $headers
+        );
+
+        // if refresh token found, return that or return the access token
+        $refreshTokenInfo = json_decode($refreshTokenJsonInfo, true);
+        if (!empty($refreshTokenInfo['access_token']) && !empty($refreshTokenInfo['refresh_token'])) {
+            $accessToken = new CommonAccessToken($refreshTokenInfo['access_token'], ThirdParty::ZOOM);
+            $accessToken->setRefreshToken($refreshTokenInfo['refresh_token']);
+        }//*/
+
+        return $accessToken;
     }
 
     /**

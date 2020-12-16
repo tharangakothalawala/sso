@@ -27,6 +27,11 @@ class CommonAccessToken
     private $email;
 
     /**
+     * @var string token used to refresh this access token
+     */
+    private $refreshToken;
+
+    /**
      * This value object can be used to represent an access token by any third party vendor.
      *
      * @param string $token the access token string
@@ -68,5 +73,25 @@ class CommonAccessToken
     public function email()
     {
         return $this->email;
+    }
+
+    /**
+     * returns the token used to refresh this access token
+     *
+     * @return string
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * Set the token used to refresh this access token
+     *
+     * @param string $refreshToken refresh token
+     */
+    public function setRefreshToken($refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
     }
 }
