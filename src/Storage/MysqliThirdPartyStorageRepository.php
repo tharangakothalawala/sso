@@ -143,15 +143,17 @@ SQL
                 `vendor_name`,
                 `vendor_email`,
                 `vendor_access_token`,
+                `vendor_refresh_token`,
                 `vendor_data`,
                 `created_at`
             )
             VALUES
             (
-                ?, ?, ?, ?, ?, NOW()
+                ?, ?, ?, ?, ?, ?, NOW()
             )
             ON DUPLICATE KEY UPDATE
                 `vendor_access_token` = VALUES(`vendor_access_token`),
+                `vendor_refresh_token` = VALUES(`vendor_refresh_token`),
                 `vendor_data` = VALUES(`vendor_data`),
                 `updated_at` = NOW()
 SQL;
@@ -161,9 +163,10 @@ SQL;
         $vendorName = $accessToken->vendor();
         $vendorEmail = $thirdPartyUser->email();
         $vendorToken = $accessToken->token();
+        $vendorRefreshToken = $accessToken->getRefreshToken();
 
         $stmt = $this->dbConnection->prepare($sql);
-        $stmt->bind_param('sssss', $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorData);
+        $stmt->bind_param('ssssss', $appUserId, $vendorName, $vendorEmail, $vendorToken, $vendorRefreshToken, $vendorData);
         $saved = $stmt->execute();
         if (!$saved) {
             throw new DataCannotBeStoredException(

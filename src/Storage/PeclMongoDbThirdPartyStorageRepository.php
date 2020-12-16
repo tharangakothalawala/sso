@@ -149,6 +149,7 @@ class PeclMongoDbThirdPartyStorageRepository implements ThirdPartyStorageReposit
                 array(
                     '$set' => array(
                         'vendor_access_token' => $accessToken->token(),
+                        'vendor_refresh_token' => $accessToken->getRefreshToken(),
                         'vendor_data' => json_encode($thirdPartyUser->toArray()),
                     ),
                 )
@@ -160,6 +161,7 @@ class PeclMongoDbThirdPartyStorageRepository implements ThirdPartyStorageReposit
                 'vendor_name' => $accessToken->vendor(),
                 'vendor_email' => $thirdPartyUser->email(),
                 'vendor_access_token' => $accessToken->token(),
+                'vendor_refresh_token' => $accessToken->getRefreshToken(),
                 'vendor_data' => json_encode($thirdPartyUser->toArray()),
                 'created_at' => date('Y-m-d H:i:s'),
             ));
