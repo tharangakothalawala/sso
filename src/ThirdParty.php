@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Tharanga Kothalawala <tharanga.kothalawala@tsk-webdevelopment.com>
- * @date 30-12-2018
+ * @date   30-12-2018
  */
 
 namespace TSK\SSO;
@@ -20,6 +20,7 @@ class ThirdParty
     const LINKEDIN = 'linkedin';
     const SLACK = 'slack';
     const SPOTIFY = 'spotify';
+    const STRIPE = 'stripe';
     const TWITTER = 'twitter';
     const YAHOO = 'yahoo';
     const ZOOM = 'zoom';
