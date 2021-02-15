@@ -1,13 +1,22 @@
 {
     "name": "tharangakothalawala/sso",
     "description": "This is a library which can provision new accounts and to authenticate users utilizing third party vendor connections.",
-    "keywords": ["sso", "signup", "signin", "register", "login", "provision"],
+    "keywords": [
+        "sso",
+        "signup",
+        "signin",
+        "register",
+        "login",
+        "provision"
+    ],
     "type": "library",
     "license": "MIT",
-    "authors": [{
-        "name": "Tharanga Kothalawala",
-        "email": "tharanga.kothalawala@gmail.com"
-    }],
+    "authors": [
+        {
+            "name": "Tharanga Kothalawala",
+            "email": "tharanga.kothalawala@gmail.com"
+        }
+    ],
     "minimum-stability": "dev",
     "require": {
         "php": ">=5.3",
@@ -30,5 +39,8 @@
         "psr-4": {
             "TSK\\SSO\\": "tests/"
         }
+    },
+    "suggest": {
+        "stripe/stripe-php": "Allows using the Stripe Connection"
     }
 }
