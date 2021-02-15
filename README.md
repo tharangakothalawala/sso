@@ -17,6 +17,7 @@ This is a library which can provision new accounts and can authenticate users ut
 * LinkedIn
 * Slack
 * Spotify
+* Stripe
 * Twitter
 * Yahoo
 * Zoom
